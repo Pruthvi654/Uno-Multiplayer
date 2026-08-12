@@ -21,6 +21,7 @@ function App() {
   const [gameMessage, setGameMessage] = useState("");
   const [direction, setDirection] = useState(1);
   const [pendingDraw, setPendingDraw] = useState(0);
+  const [lastStackAmount, setLastStackAmount] = useState(0);
   //const [showColorPicker, setShowColorPicker] = useState(false);
   const [unoState, setUnoState] = useState(null);
   const [gameMode, setGameMode] = useState("normal");
@@ -59,6 +60,7 @@ function App() {
       gameMessage,
       direction,
       pendingDraw,
+      lastStackAmount,
       unoState
     }) => {
 
@@ -80,6 +82,8 @@ function App() {
 
       setPendingDraw(pendingDraw);
 
+      setLastStackAmount(lastStackAmount || 0);
+
       setUnoState(unoState);
 
       setRankings([]);
@@ -97,6 +101,7 @@ function App() {
       gameMessage,
       direction,
       pendingDraw,
+      lastStackAmount,
       unoState
     }) => {
 
@@ -116,9 +121,12 @@ function App() {
 
       setPendingDraw(pendingDraw);
 
+      setLastStackAmount(lastStackAmount || 0);
+
       setUnoState(unoState);
 
     });
+
 
     socket.on("game-over", ({ rankings }) => {
 
@@ -456,9 +464,11 @@ function App() {
         gameMessage={gameMessage}
         direction={direction}
         pendingDraw={pendingDraw}
+        lastStackAmount={lastStackAmount}
         unoState={unoState}
         callUno={callUno}
       />
+
 
     );
 

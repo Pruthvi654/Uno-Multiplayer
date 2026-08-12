@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import GameTable from "./GameTable";
 import PlayerSeat from "./PlayerSeat";
 import UnoCard from "./cards/UnoCard";
@@ -20,6 +20,7 @@ function Game({
   gameMessage,
   direction,
   pendingDraw,
+  lastStackAmount,
   unoState,
   callUno
 }) {
@@ -116,92 +117,66 @@ function Game({
 
   }, [topCard, lastPileCard, pileInitialized]);
 
-  // ACTION EFFECT SYSTEM
- useEffect(() => {
+  const [stackPopText, setStackPopText] = useState(null);
+  const [lastProcessedCard, setLastProcessedCard] = useState("");
+  const [prevPendingDraw, setPrevPendingDraw] = useState(0);
 
-  if (!topCard) return;
+  // UNIFIED ACTION & STACK POP SYSTEM
+  useEffect(() => {
+    if (!topCard) return;
 
-  if (!pileInitialized) return;
+    const currentCardId = JSON.stringify({
+      color: topCard.color,
+      type: topCard.type,
+      value: topCard.value,
+      chosenColor: topCard.chosenColor
+    });
 
-  const currentCardId = JSON.stringify({
+    const isNewCard = currentCardId !== lastProcessedCard;
+    const isNewStack = pendingDraw > 0 && pendingDraw !== prevPendingDraw;
 
-    color: topCard.color,
+    if (isNewCard || isNewStack) {
+      if (isNewCard) {
+        setLastProcessedCard(currentCardId);
 
-    type: topCard.type,
+        // REVERSE EFFECT
+        if (topCard.type === "reverse") {
+          setReversePulse(true);
+          setTimeout(() => setReversePulse(false), 1200);
+        }
 
-    value: topCard.value,
+        // SKIP EFFECT
+        if (topCard.type === "skip") {
+          setShowSkipEffect(true);
+          setTimeout(() => setShowSkipEffect(false), 900);
+        }
+      }
 
-    chosenColor: topCard.chosenColor
-  });
+      // STACK POP ANIMATION (+2, +4, +6, +8...)
+      const popCount = pendingDraw > 0 
+        ? pendingDraw 
+        : (lastStackAmount > 0 
+          ? lastStackAmount 
+          : (topCard.type === "wild4" ? 4 : 2));
 
-  // SAME CARD = IGNORE
-  if (currentCardId === lastPileCard) return;
+      if (pendingDraw > 0 || (isNewCard && (topCard.type === "draw2" || topCard.type === "wild4"))) {
+        setStackPopText({
+          text: `+${popCount}`,
+          id: Date.now()
+        });
+        setTimeout(() => setStackPopText(null), 1200);
+      }
 
-  setLastPileCard(currentCardId);
+      setPrevPendingDraw(pendingDraw);
+    } else if (pendingDraw === 0 && prevPendingDraw !== 0) {
+      setPrevPendingDraw(0);
+    }
+  }, [topCard, lastProcessedCard, pendingDraw, prevPendingDraw, lastStackAmount]);
 
-  // REVERSE EFFECT
-  if (topCard.type === "reverse") {
 
-    setReversePulse(true);
 
-    setTimeout(() => {
 
-      setReversePulse(false);
 
-    }, 1200);
-
-  }
-
-  // SKIP EFFECT
-  if (topCard.type === "skip") {
-
-    setShowSkipEffect(true);
-
-    setTimeout(() => {
-
-      setShowSkipEffect(false);
-
-    }, 900);
-
-  }
-
-}, [
-  topCard,
-  pileInitialized,
-  lastPileCard
-]);
-
-useEffect(() => {
-
-  // STACK ACTIVE
-  if (pendingDraw > 0) {
-
-    setDisplayStackCount(pendingDraw);
-
-    return;
-  }
-
-  // STACK JUST RESOLVED
-  if (
-    displayStackCount > 0 &&
-    pendingDraw === 0
-  ) {
-
-    // FREEZE LAST VALUE
-    setFinalStackPopup(displayStackCount);
-
-    const timer = setTimeout(() => {
-
-      setDisplayStackCount(0);
-
-      setFinalStackPopup(0);
-
-    }, 1100);
-
-    return () => clearTimeout(timer);
-  }
-
-}, [pendingDraw, displayStackCount]);
 
   // Loading screen
   if (!topCard) {
@@ -400,7 +375,55 @@ useEffect(() => {
 }}
         />
         </div>
+
+        {/* STACK NUMBER POP ANIMATION (ON TOP OF PILE, NO BORDER, NO BG) */}
+        <AnimatePresence>
+          {stackPopText && (
+            <motion.div
+              key={stackPopText.id}
+              initial={{ scale: 0.2, y: 20, opacity: 0, rotate: -12 }}
+              animate={{
+                scale: [0.2, 1.45, 1.0],
+                y: [20, -10, -20],
+                opacity: 1,
+                rotate: [-12, 5, 0]
+              }}
+              exit={{ scale: 1.5, opacity: 0, filter: "blur(6px)" }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="
+                absolute
+                left-1/2
+                top-1/2
+                -translate-x-1/2
+                -translate-y-1/2
+
+                z-[99999]
+                pointer-events-none
+
+                flex
+                items-center
+                justify-center
+                whitespace-nowrap
+              "
+            >
+              <span className="
+                text-6xl sm:text-7xl md:text-8xl lg:text-9xl
+                font-black
+                tracking-tight
+                text-yellow-300
+                drop-shadow-[0_0_30px_rgba(255,215,0,1)]
+                filter
+                drop-shadow-[0_8px_16px_rgba(0,0,0,0.95)]
+                select-none
+              ">
+                {stackPopText.text}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
+
 
       {/* PLAYER AREA */}
       <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pb-6 px-4">

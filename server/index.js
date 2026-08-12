@@ -974,7 +974,10 @@ socket.on("play-card", ({
 
             pendingDraw: room.pendingDraw,
 
+            lastStackAmount: room.lastStackAmount || 0,
+
             unoState: getSafeUnoState(room)
+
 
           });
 
@@ -1213,6 +1216,8 @@ socket.on("play-card", ({
 
       room.pendingDraw += 4;
 
+      room.lastStackAmount = room.pendingDraw;
+
       room.pendingDrawType = "wild4";
 
       room.gameMessage =
@@ -1228,12 +1233,15 @@ socket.on("play-card", ({
 
       room.pendingDraw += 2;
 
+      room.lastStackAmount = room.pendingDraw;
+
       room.pendingDrawType = "draw2";
 
       room.gameMessage =
         `+${room.pendingDraw} Cards!`;
 
     }
+
 
     // =====================================
     // REVERSE
@@ -1288,9 +1296,12 @@ socket.on("play-card", ({
 
       room.pendingDraw = 0;
 
+      room.lastStackAmount = 0;
+
       room.pendingDrawType = null;
 
     }
+
 
     // =====================================
     // NEXT PLAYER
@@ -1343,7 +1354,10 @@ socket.on("play-card", ({
 
         pendingDraw: room.pendingDraw,
 
+        lastStackAmount: room.lastStackAmount || 0,
+
         unoState: getSafeUnoState(room)
+
 
       });
 
