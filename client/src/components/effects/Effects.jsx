@@ -22,41 +22,41 @@ function Effects({
 
   useEffect(() => {
 
-  // NORMAL STATE
-  if (!reversePulse) {
+    // NORMAL STATE
+    if (!reversePulse) {
 
-    setDisplayDirection(direction);
+      setDisplayDirection(direction);
 
-    return;
+      return;
 
-  }
+    }
 
-  // REVERSE PLAYED
-  setReverseAnimating(true);
+    // REVERSE PLAYED
+    setReverseAnimating(true);
 
-  // CHANGE PNG MID-SPIN
-  const swapTimer = setTimeout(() => {
+    // CHANGE PNG MID-SPIN
+    const swapTimer = setTimeout(() => {
 
-    setDisplayDirection(direction);
+      setDisplayDirection(direction);
 
-  }, 600);
+    }, 600);
 
-  // STOP ANIMATION
-  const stopTimer = setTimeout(() => {
+    // STOP ANIMATION
+    const stopTimer = setTimeout(() => {
 
-    setReverseAnimating(false);
+      setReverseAnimating(false);
 
-  }, 1200);
+    }, 1200);
 
-  return () => {
+    return () => {
 
-    clearTimeout(swapTimer);
+      clearTimeout(swapTimer);
 
-    clearTimeout(stopTimer);
+      clearTimeout(stopTimer);
 
-  };
+    };
 
-}, [direction, reversePulse]);
+  }, [direction, reversePulse]);
 
   return (
 
@@ -67,7 +67,7 @@ function Effects({
 
         pointer-events-none
 
-        z-[500]
+        z-[8]
       "
     >
 
@@ -85,8 +85,8 @@ function Effects({
           -translate-x-1/2
           -translate-y-1/2
 
-          w-[500px]
-          h-[500px]
+          w-full
+          h-full
         "
       >
 
@@ -237,7 +237,7 @@ function Effects({
 
       </div>
 
-      
+
 
       {/* ===================================== */}
       {/* SKIP EFFECT */}
