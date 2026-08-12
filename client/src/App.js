@@ -17,141 +17,141 @@ function App() {
   const [topCard, setTopCard] = useState(null);
   const [currentTurn, setCurrentTurn] = useState("");
   const [hasDrawnCard, setHasDrawnCard] = useState(false);
-  const [rankings, setRankings] =  useState([]);
+  const [rankings, setRankings] = useState([]);
   const [gameMessage, setGameMessage] = useState("");
   const [direction, setDirection] = useState(1);
   const [pendingDraw, setPendingDraw] = useState(0);
   //const [showColorPicker, setShowColorPicker] = useState(false);
   const [unoState, setUnoState] = useState(null);
-  const [gameMode, setGameMode] =  useState("normal");
-  const [rematchRequested, setRematchRequested] =  useState(false);
+  const [gameMode, setGameMode] = useState("normal");
+  const [rematchRequested, setRematchRequested] = useState(false);
 
   useEffect(() => {
 
-  socket.on("room-created", ({ roomId, players }) => {
+    socket.on("room-created", ({ roomId, players }) => {
 
-    setIsHost(true);
+      setIsHost(true);
 
-    setRoomId(roomId);
+      setRoomId(roomId);
 
-    setPlayers(players);
+      setPlayers(players);
 
-  });
+    });
 
-  socket.on("update-players", (players) => {
+    socket.on("update-players", (players) => {
 
-    setPlayers(players);
+      setPlayers(players);
 
-  });
+    });
 
-  socket.on("error-message", (message) => {
+    socket.on("error-message", (message) => {
 
-    alert(message);
+      alert(message);
 
-  });
+    });
 
-  socket.on("game-started", ({
-    hand,
-    topCard,
-    currentTurn,
-    hasDrawnCard,
-    players,
-    gameMessage,
-    direction,
-    pendingDraw,
-    unoState
-  }) => {
+    socket.on("game-started", ({
+      hand,
+      topCard,
+      currentTurn,
+      hasDrawnCard,
+      players,
+      gameMessage,
+      direction,
+      pendingDraw,
+      unoState
+    }) => {
 
-    setHand(hand);
+      setHand(hand);
 
-    setTopCard(topCard);
+      setTopCard(topCard);
 
-    setCurrentTurn(currentTurn);
+      setCurrentTurn(currentTurn);
 
-    setHasDrawnCard(hasDrawnCard);
+      setHasDrawnCard(hasDrawnCard);
 
-    setPlayers(players);
+      setPlayers(players);
 
-    setGameStarted(true);
+      setGameStarted(true);
 
-    setGameMessage(gameMessage || "");
+      setGameMessage(gameMessage || "");
 
-    setDirection(direction);
+      setDirection(direction);
 
-    setPendingDraw(pendingDraw);
+      setPendingDraw(pendingDraw);
 
-    setUnoState(unoState);
+      setUnoState(unoState);
 
-    setRankings([]);
+      setRankings([]);
 
-    setRematchRequested(false);
+      setRematchRequested(false);
 
-  });
+    });
 
-  socket.on("game-update", ({
-    hand,
-    topCard,
-    currentTurn,
-    hasDrawnCard,
-    players,
-    gameMessage,
-    direction,
-    pendingDraw,
-    unoState
-  }) => {
+    socket.on("game-update", ({
+      hand,
+      topCard,
+      currentTurn,
+      hasDrawnCard,
+      players,
+      gameMessage,
+      direction,
+      pendingDraw,
+      unoState
+    }) => {
 
-    setHand(hand);
+      setHand(hand);
 
-    setTopCard(topCard);
+      setTopCard(topCard);
 
-    setCurrentTurn(currentTurn);
+      setCurrentTurn(currentTurn);
 
-    setHasDrawnCard(hasDrawnCard);
+      setHasDrawnCard(hasDrawnCard);
 
-    setPlayers(players);
+      setPlayers(players);
 
-    setGameMessage(gameMessage || "");
+      setGameMessage(gameMessage || "");
 
-    setDirection(direction);
+      setDirection(direction);
 
-    setPendingDraw(pendingDraw);
+      setPendingDraw(pendingDraw);
 
-    setUnoState(unoState);
+      setUnoState(unoState);
 
-  });
+    });
 
-  socket.on("game-over", ({ rankings }) => {
+    socket.on("game-over", ({ rankings }) => {
 
-  setRankings(rankings);
+      setRankings(rankings);
 
-  });
+    });
 
-  socket.on("uno-update", (unoState) => {
+    socket.on("uno-update", (unoState) => {
 
-  setUnoState(unoState);
+      setUnoState(unoState);
 
-  });
+    });
 
-  // CLEANUP LISTENERS
-  return () => {
+    // CLEANUP LISTENERS
+    return () => {
 
-    socket.off("room-created");
+      socket.off("room-created");
 
-    socket.off("update-players");
+      socket.off("update-players");
 
-    socket.off("error-message");
+      socket.off("error-message");
 
-    socket.off("game-started");
+      socket.off("game-started");
 
-    socket.off("game-update");
+      socket.off("game-update");
 
-    socket.off("game-over");
+      socket.off("game-over");
 
-    socket.off("uno-update");
+      socket.off("uno-update");
 
-  };
+    };
 
-}, []);
+  }, []);
 
   const createRoom = () => {
 
@@ -169,23 +169,23 @@ function App() {
 
   const joinRoom = () => {
 
-  if (!joinName || !joinRoomCode) return;
+    if (!joinName || !joinRoomCode) return;
 
-  // ALREADY INSIDE ROOM
-  const alreadyJoined = players.some(
-    player => player.id === socket.id
-  );
+    // ALREADY INSIDE ROOM
+    const alreadyJoined = players.some(
+      player => player.id === socket.id
+    );
 
-  if (alreadyJoined) return;
+    if (alreadyJoined) return;
 
-  setIsHost(false);
+    setIsHost(false);
 
-  socket.emit("join-room", {
-    roomId: joinRoomCode,
-    username: joinName
-  });
+    socket.emit("join-room", {
+      roomId: joinRoomCode,
+      username: joinName
+    });
 
-  setRoomId(joinRoomCode);
+    setRoomId(joinRoomCode);
 
   };
 
@@ -216,46 +216,46 @@ function App() {
 
   const drawCard = () => {
 
-  socket.emit("draw-card", {
+    socket.emit("draw-card", {
 
-    roomId
+      roomId
 
-  });
+    });
 
   };
 
   const skipTurn = () => {
 
-  socket.emit("skip-turn", {
+    socket.emit("skip-turn", {
 
-    roomId
+      roomId
 
-  });
+    });
 
   };
 
   const callUno = () => {
 
-  socket.emit("call-uno", {
+    socket.emit("call-uno", {
 
-    roomId
+      roomId
 
-  });
+    });
 
   };
 
   const requestRematch = () => {
 
-  // ALREADY PRESSED
-  if (rematchRequested) return;
+    // ALREADY PRESSED
+    if (rematchRequested) return;
 
-  setRematchRequested(true);
+    setRematchRequested(true);
 
-  socket.emit("request-rematch", {
+    socket.emit("request-rematch", {
 
-    roomId
+      roomId
 
-  });
+    });
 
   };
 
@@ -328,13 +328,13 @@ function App() {
                         index === 0
                           ? "🥇"
 
-                        : index === 1
-                          ? "🥈"
+                          : index === 1
+                            ? "🥈"
 
-                        : index === 2
-                          ? "🥉"
+                            : index === 2
+                              ? "🥉"
 
-                        : "💀"
+                              : "💀"
                       }
 
                     </div>
@@ -388,12 +388,11 @@ function App() {
                 shadow-xl
                 transition
 
-                ${
-                  rematchRequested
+                ${rematchRequested
 
-                    ? "bg-green-700 text-white cursor-not-allowed"
+                  ? "bg-green-700 text-white cursor-not-allowed"
 
-                    : "bg-green-500 hover:bg-green-600"
+                  : "bg-green-500 hover:bg-green-600"
                 }
               `}
             >

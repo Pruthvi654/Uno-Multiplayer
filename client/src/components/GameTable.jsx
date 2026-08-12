@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function GameTable({ children }) {
 
-  const [mousePosition, setMousePosition] = useState({
-    x: 0,
-    y: 0
-  });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showLandscapeHint, setShowLandscapeHint] = useState(false);
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setShowLandscapeHint(w < 600 && h > w);
+    };
+    checkOrientation();
+    window.addEventListener("resize", checkOrientation);
+    window.addEventListener("orientationchange", checkOrientation);
+    return () => {
+      window.removeEventListener("resize", checkOrientation);
+      window.removeEventListener("orientationchange", checkOrientation);
+    };
+  }, []);
 
   return (
 
@@ -145,6 +158,14 @@ function GameTable({ children }) {
           `
         }}
       />
+
+      {/* LANDSCAPE HINT FOR PORTRAIT PHONES */}
+      {showLandscapeHint && (
+        <div className="absolute top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-black/80 backdrop-blur-sm py-2 text-xs text-yellow-300 font-semibold tracking-wide pointer-events-none">
+          <span>📱</span>
+          <span>Rotate to landscape for the best experience</span>
+        </div>
+      )}
 
       {/* MAIN TABLE */}
 

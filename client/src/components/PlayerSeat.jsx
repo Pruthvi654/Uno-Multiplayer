@@ -4,13 +4,13 @@ import { memo } from "react";
 function PlayerSeat({ position, username, cardCount, active, isSpectator }) {
 
   const positions = {
-    top: `top-8 left-1/2 -translate-x-1/2 flex-row`,
-    left: `left-8 top-1/2 -translate-y-1/2 flex-row`,
-    right: `right-8 top-1/2 -translate-y-1/2 flex-row-reverse`
+    top: `top-3 sm:top-6 lg:top-8 left-1/2 -translate-x-1/2 flex-row`,
+    left: `left-3 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 flex-row`,
+    right: `right-3 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 flex-row-reverse`
   };
 
   return (
-    <div className={`absolute flex items-center gap-4 z-20 scale-[0.92] ${positions[position]}`}>
+    <div className={`absolute flex items-center gap-2 sm:gap-4 z-20 scale-[0.65] sm:scale-[0.78] lg:scale-[0.92] ${positions[position]}`}>
 
       <div className={`px-4 py-2 rounded-2xl bg-black/30 backdrop-blur-md border transition-all duration-300 ${active ? `border-yellow-400 shadow-[0_0_25px_rgba(255,255,0,0.5)]` : `border-white/10`}`}>
         <div

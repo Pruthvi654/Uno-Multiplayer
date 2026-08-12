@@ -352,8 +352,8 @@ useEffect(() => {
     -translate-x-1/2
     -translate-y-1/2
 
-    w-[500px]
-    h-[500px]
+    w-[min(500px,45vw)]
+    h-[min(500px,45vw)]
 
     pointer-events-none
 
@@ -601,7 +601,7 @@ useEffect(() => {
     z-50
   "
 >
-        <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`mb-4 px-10 py-4 rounded-full text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black" : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
+        <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`mb-4 px-5 sm:px-10 py-2 sm:py-4 rounded-full text-xl sm:text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black" : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
 
         {isSpectator && (<div className="mb-4 text-2xl font-bold text-yellow-300 bg-black/50 px-6 py-3 rounded-xl shadow-xl">👀 Spectating</div>)}
 </div>
@@ -618,7 +618,7 @@ useEffect(() => {
             z-50
           "
         >
-            <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500 px-8 py-3 rounded-xl text-lg font-bold shadow-xl transition">Skip Turn</button>
+            <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500 px-5 sm:px-8 py-2 sm:py-3 rounded-xl text-sm sm:text-lg font-bold shadow-xl transition">Skip Turn</button>
           </div>
         )}
       </div>

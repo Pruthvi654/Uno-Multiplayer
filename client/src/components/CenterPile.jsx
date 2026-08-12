@@ -16,21 +16,21 @@ function CenterPile({
         absolute
 
         left-[-50%]
-        top-[10%]
+        top-[8%]
 
         -translate-y-1/2
 
-        scale-[0.72]
+        scale-[0.45] sm:scale-[0.55] md:scale-[0.65] lg:scale-[0.72]
         z-30
         
       "
         onClick={() => {
 
-  console.log("DECK CLICKED");
+          console.log("DECK CLICKED");
 
-  drawCard();
+          drawCard();
 
-}}
+        }}
       >
 
         <div className="
