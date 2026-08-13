@@ -37,7 +37,7 @@ function Game({
   const [showSkipEffect, setShowSkipEffect] = useState(false);
   const [displayStackCount, setDisplayStackCount] = useState(0);
   const [finalStackPopup, setFinalStackPopup] = useState(0);
-  
+
 
 
   // BUILD DISCARD PILE
@@ -63,7 +63,7 @@ function Game({
 
         color:
           topCard.type === "wild" ||
-          topCard.type === "wild4"
+            topCard.type === "wild4"
             ? "wild"
             : topCard.color,
 
@@ -94,7 +94,7 @@ function Game({
 
       color:
         topCard.type === "wild" ||
-        topCard.type === "wild4"
+          topCard.type === "wild4"
           ? "wild"
           : topCard.color,
 
@@ -153,10 +153,10 @@ function Game({
       }
 
       // STACK POP ANIMATION (+2, +4, +6, +8...)
-      const popCount = pendingDraw > 0 
-        ? pendingDraw 
-        : (lastStackAmount > 0 
-          ? lastStackAmount 
+      const popCount = pendingDraw > 0
+        ? pendingDraw
+        : (lastStackAmount > 0
+          ? lastStackAmount
           : (topCard.type === "wild4" ? 4 : 2));
 
       if (pendingDraw > 0 || (isNewCard && (topCard.type === "draw2" || topCard.type === "wild4"))) {
@@ -281,10 +281,10 @@ function Game({
         )} */}
 
         {
-  pendingDraw > 0 && (
+          pendingDraw > 0 && (
 
-    <div
-      className="
+            <div
+              className="
         absolute
 
         bottom-6
@@ -309,16 +309,16 @@ function Game({
 
         z-40
       "
-    >
+            >
 
-      +{pendingDraw} STACK
+              +{pendingDraw} STACK
 
-    </div>
+            </div>
 
-  )
-}
-<div
-  className="
+          )
+        }
+        <div
+          className="
     absolute
 
     left-1/2
@@ -334,63 +334,63 @@ function Game({
 
     z-10
   "
->
+        >
 
-<Effects
-  direction={direction}
-  reversePulse={reversePulse}
-  showSkipEffect={showSkipEffect}
-  stackCount={
-    pendingDraw > 0
-      ? pendingDraw
-      : finalStackPopup
-  }
-/>
- <div className="pointer-events-auto">
+          <Effects
+            direction={direction}
+            reversePulse={reversePulse}
+            showSkipEffect={showSkipEffect}
+            stackCount={
+              pendingDraw > 0
+                ? pendingDraw
+                : finalStackPopup
+            }
+          />
+          <div className="pointer-events-auto">
 
-        {/* TOP CARD */}
-        <CenterPile
-          showPile={true}
-          pile={pile}
-          drawCard={() => {
+            {/* TOP CARD */}
+            <CenterPile
+              showPile={true}
+              pile={pile}
+              drawCard={() => {
 
-  if (
-    isMyTurn &&
-    !isSpectator &&
-    !hasDrawnCard
-  ) {
+                if (
+                  isMyTurn &&
+                  !isSpectator &&
+                  !hasDrawnCard
+                ) {
 
-    setDrawingCard(true);
+                  setDrawingCard(true);
 
-    setTimeout(() => {
+                  setTimeout(() => {
 
-      drawCard();
+                    drawCard();
 
-      setDrawingCard(false);
+                    setDrawingCard(false);
 
-    }, 500);
+                  }, 500);
 
-  }
+                }
 
-}}
-        />
-        </div>
-
-        {/* STACK NUMBER POP ANIMATION (ON TOP OF PILE, NO BORDER, NO BG) */}
-        <AnimatePresence>
-          {stackPopText && (
-            <motion.div
-              key={stackPopText.id}
-              initial={{ scale: 0.2, y: 20, opacity: 0, rotate: -12 }}
-              animate={{
-                scale: [0.2, 1.45, 1.0],
-                y: [20, -10, -20],
-                opacity: 1,
-                rotate: [-12, 5, 0]
               }}
-              exit={{ scale: 1.5, opacity: 0, filter: "blur(6px)" }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="
+            />
+          </div>
+
+          {/* STACK NUMBER POP ANIMATION (ON TOP OF PILE, NO BORDER, NO BG) */}
+          <AnimatePresence>
+            {stackPopText && (
+              <motion.div
+                key={stackPopText.id}
+                initial={{ scale: 0.2, y: 20, opacity: 0, rotate: -12 }}
+                animate={{
+                  scale: [0.2, 1.45, 1.0],
+                  y: [20, -10, -20],
+                  opacity: 1,
+                  rotate: [-12, 5, 0]
+                }}
+                exit={{ scale: 1.5, opacity: 0, filter: "blur(6px)" }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="
                 absolute
                 left-1/2
                 top-1/2
@@ -405,8 +405,8 @@ function Game({
                 justify-center
                 whitespace-nowrap
               "
-            >
-              <span className="
+              >
+                <span className="
                 text-6xl sm:text-7xl md:text-8xl lg:text-9xl
                 font-black
                 tracking-tight
@@ -416,22 +416,22 @@ function Game({
                 drop-shadow-[0_8px_16px_rgba(0,0,0,0.95)]
                 select-none
               ">
-                {stackPopText.text}
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  {stackPopText.text}
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      </div>
+        </div>
 
 
-      {/* PLAYER AREA */}
-      <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pb-6 px-4">
-        {/* PLAYER HAND */}
-              {
-        hand.length > 0 && (
+        {/* PLAYER AREA */}
+        <div className="absolute bottom-0 left-0 w-full flex flex-col items-center pb-6 px-4">
+          {/* PLAYER HAND */}
+          {
+            hand.length > 0 && (
 
-          <div className="
+              <div className="
             absolute
             bottom-[-20px]
             left-1/2
@@ -440,197 +440,196 @@ function Game({
             items-end
           ">
 
-            {
-              hand.map((card, index) => {
+                {
+                  hand.map((card, index) => {
 
-                const playable =
-                  isPlayable(card);
+                    const playable =
+                      isPlayable(card);
 
-                const overlap =
+                    const overlap =
 
-                  Math.max(
-                    -90,
-                    -28 - hand.length * 2.2
-                  );
+                      Math.max(
+                        -90,
+                        -28 - hand.length * 2.2
+                      );
 
-                const maxFanAngle = 40;
+                    const maxFanAngle = 40;
 
-                const rotationStep =
+                    const rotationStep =
 
-                  Math.min(
-                    8,
-                    maxFanAngle / hand.length
-                  );
+                      Math.min(
+                        8,
+                        maxFanAngle / hand.length
+                      );
 
-                const rotation =
+                    const rotation =
 
-                  (
-                    index -
-                    (hand.length - 1) / 2
-                  ) * rotationStep;
+                      (
+                        index -
+                        (hand.length - 1) / 2
+                      ) * rotationStep;
 
-                const distanceFromCenter =
+                    const distanceFromCenter =
 
-                  Math.abs(
-                    index -
-                    (hand.length - 1) / 2
-                  );
+                      Math.abs(
+                        index -
+                        (hand.length - 1) / 2
+                      );
 
-                const arcDepth =
+                    const arcDepth =
 
-                  Math.max(
-                    4,
-                    22 - hand.length * 1.5
-                  );
+                      Math.max(
+                        4,
+                        22 - hand.length * 1.5
+                      );
 
-                const translateY =
+                    const translateY =
 
-                  Math.pow(
-                    distanceFromCenter,
-                    0.7
-                  ) * arcDepth;
+                      Math.pow(
+                        distanceFromCenter,
+                        0.7
+                      ) * arcDepth;
 
-                const handleClick = () => {
+                    const handleClick = () => {
 
-                  if (
-                    isSpectator ||
-                    !isMyTurn ||
-                    !playable
-                  ) return;
+                      if (
+                        isSpectator ||
+                        !isMyTurn ||
+                        !playable
+                      ) return;
 
-                  // WILD CARD
-                  if (
-                    card.type === "wild" ||
-                    card.type === "wild4"
-                  ) {
+                      // WILD CARD
+                      if (
+                        card.type === "wild" ||
+                        card.type === "wild4"
+                      ) {
 
-                    setSelectedWildIndex(index);
+                        setSelectedWildIndex(index);
 
-                    setShowColorPicker(true);
+                        setShowColorPicker(true);
 
-                    return;
+                        return;
 
-                  }
+                      }
 
-                  const randomRotation =
-                    Math.random() * 40 - 20;
+                      const randomRotation =
+                        Math.random() * 40 - 20;
 
-                  setFlyingCard({
+                      setFlyingCard({
 
-                    ...card,
+                        ...card,
 
-                    index,
+                        index,
 
-                    rotation:
-                      randomRotation
-                  });
+                        rotation:
+                          randomRotation
+                      });
 
-                  setTimeout(() => {
+                      setTimeout(() => {
 
-                    playCard(index);
+                        playCard(index);
 
-                    setFlyingCard(null);
+                        setFlyingCard(null);
 
-                  }, 520);
+                      }, 520);
 
-                };
+                    };
 
-                const unoColor =
+                    const unoColor =
 
-                  card.type === "wild" ||
-                  card.type === "wild4"
-                    ? "wild"
-                    : card.color;
+                      card.type === "wild" ||
+                        card.type === "wild4"
+                        ? "wild"
+                        : card.color;
 
-                const unoValue =
+                    const unoValue =
 
-                  card.type === "number"
-                    ? card.value
-                    : card.type === "wild4"
-                      ? "wild4"
-                      : card.type;
+                      card.type === "number"
+                        ? card.value
+                        : card.type === "wild4"
+                          ? "wild4"
+                          : card.type;
 
-                return (
+                    return (
 
-                  <motion.div
+                      <motion.div
 
-                    key={index}
+                        key={index}
 
-                    whileHover={{
+                        whileHover={{
 
-                      scale: 1.06,
+                          scale: 1.06,
 
-                      rotate: rotation,
+                          rotate: rotation,
 
-                      y: translateY - 40
-                    }}
+                          y: translateY - 40
+                        }}
 
-                    onClick={handleClick}
+                        onClick={handleClick}
 
-                    style={{
+                        style={{
 
-                      marginLeft:
-                        index === 0
-                          ? "0px"
-                          : `${overlap}px`,
+                          marginLeft:
+                            index === 0
+                              ? "0px"
+                              : `${overlap}px`,
 
-                      zIndex: index
-                    }}
+                          zIndex: index
+                        }}
 
-                    animate={{
+                        animate={{
 
-                      rotate: rotation,
+                          rotate: rotation,
 
-                      y: translateY
-                    }}
+                          y: translateY
+                        }}
 
-                    className={`
+                        className={`
                       transition-opacity
 
-                      ${
-                        playable && isMyTurn
-                          ? "cursor-pointer"
-                          : "opacity-70"
-                      }
+                      ${playable && isMyTurn
+                            ? "cursor-pointer"
+                            : "opacity-70"
+                          }
                     `}
-                  >
+                      >
 
-                    <div className="scale-[1.15] origin-bottom">
+                        <div className="scale-[1.15] origin-bottom">
 
-                      <UnoCard
-                        color={unoColor}
-                        value={unoValue}
-                      />
+                          <UnoCard
+                            color={unoColor}
+                            value={unoValue}
+                          />
 
-                    </div>
+                        </div>
 
-                  </motion.div>
+                      </motion.div>
 
-                );
+                    );
 
-              })
-            }
+                  })
+                }
 
-          </div>
+              </div>
 
-        )
-      }
-        <div
-  className="
+            )
+          }
+          <div
+            className="
     absolute
     bottom-24
     right-6
 
     z-50
   "
->
-        <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`mb-4 px-5 sm:px-10 py-2 sm:py-4 rounded-full text-xl sm:text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black" : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
+          >
+            <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`mb-4 px-5 sm:px-10 py-2 sm:py-4 rounded-full text-xl sm:text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black" : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
 
-        {isSpectator && (<div className="mb-4 text-2xl font-bold text-yellow-300 bg-black/50 px-6 py-3 rounded-xl shadow-xl">👀 Spectating</div>)}
-</div>
-        {!isSpectator && (
-          <div
-          className="
+            {isSpectator && (<div className="mb-4 text-2xl font-bold text-yellow-300 bg-black/50 px-6 py-3 rounded-xl shadow-xl">👀 Spectating</div>)}
+          </div>
+          {!isSpectator && (
+            <div
+              className="
             absolute
             bottom-6
             right-6
@@ -640,130 +639,130 @@ function Game({
 
             z-50
           "
-        >
-            <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500 px-5 sm:px-8 py-2 sm:py-3 rounded-xl text-sm sm:text-lg font-bold shadow-xl transition">Skip Turn</button>
-          </div>
-        )}
+            >
+              <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500 px-5 sm:px-8 py-2 sm:py-3 rounded-xl text-sm sm:text-lg font-bold shadow-xl transition">Skip Turn</button>
+            </div>
+          )}
+        </div>
+
+
+
+        {
+          flyingCard && (
+
+            <motion.div
+
+              initial={{
+                x: -100,
+                y: 100,
+                scale: 1,
+                rotate: 0
+              }}
+
+              animate={{
+
+                x: -100,
+
+                y: -50,
+
+                scale: 0.72,
+
+                rotate:
+                  flyingCard.rotation
+              }}
+
+              transition={{
+                duration: 0.55,
+                ease: "easeInOut"
+              }}
+
+              className="
+        absolute
+
+        left-1/2
+        bottom-[140px]
+
+        -translate-x-1/2
+
+        z-[100]
+        pointer-events-none
+      "
+            >
+
+              <UnoCard
+                color={
+                  flyingCard.type === "wild" ||
+                    flyingCard.type === "wild4"
+                    ? "wild"
+                    : flyingCard.color
+                }
+
+                value={
+                  flyingCard.type === "number"
+                    ? flyingCard.value
+                    : flyingCard.type === "wild4"
+                      ? "wild4"
+                      : flyingCard.type
+                }
+              />
+
+            </motion.div>
+
+          )
+        }
+        {
+          drawingCard && (
+
+            <motion.div
+
+              initial={{
+
+                x: -420,
+                y: -250,
+
+                scale: 0.32,
+
+                rotate: -18
+              }}
+
+              animate={{
+
+                x: -50,
+                y: 60,
+
+                scale: 0.72,
+
+                rotate: 0
+              }}
+
+              transition={{
+                duration: 0.55,
+                ease: "easeInOut"
+              }}
+
+              className="
+        absolute
+
+        left-1/2
+        bottom-[140px]
+
+        -translate-x-1/2
+
+        z-[100]
+
+        pointer-events-none
+      "
+            >
+
+              <UnoCard
+                color="back"
+                value="back"
+              />
+
+            </motion.div>
+          )
+        }
       </div>
-
-      
-      
-      {
-  flyingCard && (
-
-    <motion.div
-
-      initial={{
-        x: -100,
-        y: 100,
-        scale: 1,
-        rotate: 0
-      }}
-
-      animate={{
-
-        x: -100,
-
-        y: -50,
-
-        scale: 0.72,
-
-        rotate:
-          flyingCard.rotation
-      }}
-
-      transition={{
-        duration: 0.55,
-        ease: "easeInOut"
-      }}
-
-      className="
-        absolute
-
-        left-1/2
-        bottom-[140px]
-
-        -translate-x-1/2
-
-        z-[100]
-        pointer-events-none
-      "
-    >
-
-      <UnoCard
-        color={
-          flyingCard.type === "wild" ||
-          flyingCard.type === "wild4"
-            ? "wild"
-            : flyingCard.color
-        }
-
-        value={
-          flyingCard.type === "number"
-            ? flyingCard.value
-            : flyingCard.type === "wild4"
-              ? "wild4"
-              : flyingCard.type
-        }
-      />
-
-    </motion.div>
-
-  )
-}
-{
-  drawingCard && (
-
-    <motion.div
-
-      initial={{
-
-        x: -420,
-        y: -250,
-
-        scale: 0.32,
-
-        rotate: -18
-      }}
-
-      animate={{
-
-        x: -50,
-        y: 60,
-
-        scale: 0.72,
-
-        rotate: 0
-      }}
-
-      transition={{
-        duration: 0.55,
-        ease: "easeInOut"
-      }}
-
-      className="
-        absolute
-
-        left-1/2
-        bottom-[140px]
-
-        -translate-x-1/2
-
-        z-[100]
-
-        pointer-events-none
-      "
-    >
-
-      <UnoCard
-        color="back"
-        value="back"
-      />
-
-    </motion.div>
-  )
-}
-</div>
     </GameTable>
   );
 }

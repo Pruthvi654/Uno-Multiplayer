@@ -161,17 +161,17 @@ function getPlayersWithHandSizes(room) {
 
   return room.players.map(player => ({
 
-  id: player.id,
+    id: player.id,
 
-  username: player.username,
+    username: player.username,
 
-  handSize:
-    room.playerHands[player.id]?.length || 0,
+    handSize:
+      room.playerHands[player.id]?.length || 0,
 
-  isSpectator:
-    player.isSpectator
+    isSpectator:
+      player.isSpectator
 
-}));
+  }));
 
 }
 
@@ -227,21 +227,21 @@ function isValidMove(
       );
 
     }
-    
+
 
     return false;
 
   }
   // WILD ALWAYS PLAYABLE
-    if (
+  if (
     card.type === "wild" ||
 
     card.type === "wild4"
-    ) {
+  ) {
 
     return true;
 
-    }
+  }
 
   // =====================================
   // NORMAL RULES
@@ -252,8 +252,8 @@ function isValidMove(
     // SAME COLOR
     card.color ===
     (
-    topCard.chosenColor ||
-    topCard.color
+      topCard.chosenColor ||
+      topCard.color
     ) ||
 
     // SAME NUMBER
@@ -384,17 +384,17 @@ function resolvePendingDraw(room) {
     `${currentPlayer.username} drew ${room.pendingDraw} cards!`;
 
   // RESET UNO IF PLAYER NOW HAS >1 CARD
-    if (
+  if (
 
     hand.length > 1 &&
 
     room.unoState.targetPlayerId === currentPlayer.id
 
-    ) {
+  ) {
 
     resetUnoState(room);
 
-    }
+  }
 
   // CLEAR PENDING
   room.pendingDraw = 0;
@@ -474,51 +474,51 @@ function resetUnoState(room) {
 
 function reshuffleDeck(room) {
 
-    // KEEP CURRENT TOP CARD
-    const currentTop = room.topCard;
+  // KEEP CURRENT TOP CARD
+  const currentTop = room.topCard;
 
-    // TAKE ALL OLD DISCARDS
-    const reshuffleCards =
+  // TAKE ALL OLD DISCARDS
+  const reshuffleCards =
 
-      room.discardPile.filter(
-        card => card !== currentTop
-      );
-
-    // SHUFFLE
-    room.deck =
-      shuffleDeck(reshuffleCards);
-
-    // RESET DISCARD
-    room.discardPile = [
-      currentTop
-    ];
-
-    console.log(
-      "Deck Reshuffled!"
+    room.discardPile.filter(
+      card => card !== currentTop
     );
 
+  // SHUFFLE
+  room.deck =
+    shuffleDeck(reshuffleCards);
+
+  // RESET DISCARD
+  room.discardPile = [
+    currentTop
+  ];
+
+  console.log(
+    "Deck Reshuffled!"
+  );
+
+}
+function safeDrawCard(room) {
+
+  // RESHUFFLE IF EMPTY
+  if (room.deck.length === 0) {
+
+    reshuffleDeck(room);
+
   }
-  function safeDrawCard(room) {
 
-    // RESHUFFLE IF EMPTY
-    if (room.deck.length === 0) {
+  // STILL EMPTY
+  if (room.deck.length === 0) {
 
-      reshuffleDeck(room);
-
-    }
-
-    // STILL EMPTY
-    if (room.deck.length === 0) {
-
-      return null;
-
-    }
-
-    return room.deck.pop();
+    return null;
 
   }
 
-  function getNextActivePlayerIndex(
+  return room.deck.pop();
+
+}
+
+function getNextActivePlayerIndex(
   room,
   currentIndex,
   moveSteps = 1
@@ -580,78 +580,78 @@ io.on("connection", (socket) => {
       gameMode
     }) => {
 
-    const roomId =
-      Math.random().toString(36).substring(2, 8);
+      const roomId =
+        Math.random().toString(36).substring(2, 8);
 
-    rooms[roomId] = {
+      rooms[roomId] = {
 
-      host: socket.id,
+        host: socket.id,
 
-      gameStarted: false,
+        gameStarted: false,
 
-      players: [
-        {
-          id: socket.id,
-          username,
-          isSpectator: false
-        }
-      ],
+        players: [
+          {
+            id: socket.id,
+            username,
+            isSpectator: false
+          }
+        ],
 
-      deck: [],
+        deck: [],
 
-      discardPile: [],
+        discardPile: [],
 
-      playerHands: {},
+        playerHands: {},
 
-      currentTurn: null,
+        currentTurn: null,
 
-      topCard: null,
+        topCard: null,
 
-      hasDrawnCard: false,
+        hasDrawnCard: false,
 
-      direction: 1,
+        direction: 1,
 
-      pendingDraw: 0,
+        pendingDraw: 0,
 
-      pendingDrawType: null,
+        pendingDrawType: null,
 
-      gameMessage: "",
+        gameMessage: "",
 
-      unoState: {
+        unoState: {
 
-        targetPlayerId: null,
+          targetPlayerId: null,
 
-        canCallUno: false,
+          canCallUno: false,
 
-        canCatch: false,
+          canCatch: false,
 
-        timeout: null,
+          timeout: null,
 
-      },
+        },
 
-      gameMode,
+        gameMode,
 
-      winners: [],
+        winners: [],
 
-      actionLocked: false,
+        actionLocked: false,
 
-      rematchVotes: []
+        rematchVotes: []
 
-    };
+      };
 
-    socket.join(roomId);
+      socket.join(roomId);
 
-    socket.emit("room-created", {
+      socket.emit("room-created", {
 
-      roomId,
+        roomId,
 
-      players: rooms[roomId].players
+        players: rooms[roomId].players
+
+      });
+
+      console.log("Room Created:", roomId);
 
     });
-
-    console.log("Room Created:", roomId);
-
-  });
 
   // ======================================================
   // JOIN ROOM
@@ -671,22 +671,22 @@ io.on("connection", (socket) => {
     }
 
     // PLAYER ALREADY IN ROOM
-const alreadyJoined =
+    const alreadyJoined =
 
-  rooms[roomId].players.some(
-    player => player.id === socket.id
-  );
+      rooms[roomId].players.some(
+        player => player.id === socket.id
+      );
 
-  if (alreadyJoined) {
+    if (alreadyJoined) {
 
-    socket.emit(
-      "error-message",
-      "You are already in the room"
-    );
+      socket.emit(
+        "error-message",
+        "You are already in the room"
+      );
 
-    return;
+      return;
 
-  }
+    }
 
     if (rooms[roomId].players.length >= 4) {
 
@@ -811,102 +811,620 @@ const alreadyJoined =
 
   });
 
- // ======================================================
-// PLAY CARD
-// ======================================================
+  // ======================================================
+  // PLAY CARD
+  // ======================================================
 
-socket.on("play-card", ({
-  roomId,
-  cardIndex,
-  chosenColor
-}) => {
+  socket.on("play-card", ({
+    roomId,
+    cardIndex,
+    chosenColor
+  }) => {
 
-  const room = rooms[roomId];
+    const room = rooms[roomId];
 
-  if (!room) return;
-
-  // =====================================
-  // ACTION LOCK
-  // =====================================
-
-  if (room.actionLocked) {
-
-    return;
-
-  }
-
-  room.actionLocked = true;
-
-  try {
+    if (!room) return;
 
     // =====================================
-    // TURN VALIDATION
+    // ACTION LOCK
     // =====================================
 
-    if (room.currentTurn !== socket.id) {
+    if (room.actionLocked) {
 
       return;
 
     }
 
-    const playerHand =
-      room.playerHands[socket.id];
+    room.actionLocked = true;
 
-    // INVALID HAND
-    if (!playerHand) {
+    try {
 
-      return;
+      // =====================================
+      // TURN VALIDATION
+      // =====================================
 
-    }
+      if (room.currentTurn !== socket.id) {
 
-    const selectedCard =
-      playerHand[cardIndex];
+        return;
 
-    // INVALID CARD
-    if (!selectedCard) {
+      }
 
-      return;
+      const playerHand =
+        room.playerHands[socket.id];
 
-    }
+      // INVALID HAND
+      if (!playerHand) {
 
-    const currentPlayerIndex =
+        return;
 
-      room.players.findIndex(
-        player => player.id === socket.id
+      }
+
+      const selectedCard =
+        playerHand[cardIndex];
+
+      // INVALID CARD
+      if (!selectedCard) {
+
+        return;
+
+      }
+
+      const currentPlayerIndex =
+
+        room.players.findIndex(
+          player => player.id === socket.id
+        );
+
+      const topCard = room.topCard;
+
+      // =====================================
+      // PENDING DRAW LOGIC
+      // =====================================
+
+      if (room.pendingDraw > 0) {
+
+        let validStack = false;
+
+        // +2 RULES
+        if (topCard.type === "draw2") {
+
+          validStack =
+
+            selectedCard.type === "draw2" ||
+
+            selectedCard.type === "wild4";
+
+        }
+
+        // +4 RULES
+        else if (topCard.type === "wild4") {
+
+          validStack =
+
+            selectedCard.type === "wild4";
+
+        }
+
+        // PLAYER CANNOT STACK
+        if (!validStack) {
+
+          for (let i = 0; i < room.pendingDraw; i++) {
+
+            const drawnCard =
+              safeDrawCard(room);
+
+            if (drawnCard) {
+
+              room.playerHands[socket.id]
+                .push(drawnCard);
+
+            }
+
+          }
+
+          // RESET UNO
+          if (
+
+            room.playerHands[socket.id].length > 1 &&
+
+            room.unoState.targetPlayerId === socket.id
+
+          ) {
+
+            resetUnoState(room);
+
+          }
+
+          room.gameMessage =
+            `${room.players[currentPlayerIndex].username} drew ${room.pendingDraw} cards!`;
+
+          room.pendingDraw = 0;
+
+          room.pendingDrawType = null;
+
+          const nextPlayerIndex =
+
+            getNextActivePlayerIndex(
+              room,
+              currentPlayerIndex
+            );
+
+          room.currentTurn =
+            room.players[nextPlayerIndex].id;
+
+          room.hasDrawnCard = false;
+
+          room.players.forEach(player => {
+
+            io.to(player.id).emit("game-update", {
+
+              hand: room.playerHands[player.id],
+
+              topCard: room.topCard,
+
+              currentTurn: room.currentTurn,
+
+              hasDrawnCard: room.hasDrawnCard,
+
+              players: getPlayersWithHandSizes(room),
+
+              gameMessage: room.gameMessage,
+
+              direction: room.direction,
+
+              pendingDraw: room.pendingDraw,
+
+              lastStackAmount: room.lastStackAmount || 0,
+
+              unoState: getSafeUnoState(room)
+
+
+            });
+
+          });
+
+          return;
+
+        }
+
+      }
+
+      // =====================================
+      // VALIDATE MOVE
+      // =====================================
+
+      const validMove = isValidMove(
+        selectedCard,
+        topCard,
+        room.pendingDraw
       );
 
-    const topCard = room.topCard;
+      if (!validMove) {
 
-    // =====================================
-    // PENDING DRAW LOGIC
-    // =====================================
-
-    if (room.pendingDraw > 0) {
-
-      let validStack = false;
-
-      // +2 RULES
-      if (topCard.type === "draw2") {
-
-        validStack =
-
-          selectedCard.type === "draw2" ||
-
-          selectedCard.type === "wild4";
+        return;
 
       }
 
-      // +4 RULES
-      else if (topCard.type === "wild4") {
+      // =====================================
+      // REMOVE CARD
+      // =====================================
 
-        validStack =
+      playerHand.splice(cardIndex, 1);
 
-          selectedCard.type === "wild4";
+      // =====================================
+      // MOVE OLD TOP CARD
+      // =====================================
+
+      const previousTopCard =
+        room.topCard;
+
+      if (previousTopCard) {
+
+        room.discardPile.push(
+          previousTopCard
+        );
 
       }
 
-      // PLAYER CANNOT STACK
-      if (!validStack) {
+      // =====================================
+      // UPDATE TOP CARD
+      // =====================================
+
+      room.topCard = selectedCard;
+
+      // =====================================
+      // WILD COLOR
+      // =====================================
+
+      if (
+
+        selectedCard.type === "wild" ||
+
+        selectedCard.type === "wild4"
+
+      ) {
+
+        room.topCard = {
+
+          ...selectedCard,
+
+          chosenColor
+
+        };
+
+      }
+
+      // =====================================
+      // UNO CHECK
+      // =====================================
+
+      if (playerHand.length === 1) {
+
+        resetUnoState(room);
+
+        room.unoState.targetPlayerId =
+          socket.id;
+
+        room.unoState.canCallUno = true;
+
+        room.unoState.canCatch = false;
+
+        room.gameMessage =
+          `${room.players[currentPlayerIndex].username} has UNO!`;
+
+        // START TIMER
+        room.unoState.timeout = setTimeout(() => {
+
+          room.unoState.canCatch = true;
+
+          room.gameMessage =
+            "UNO can now be caught!";
+
+          room.players.forEach(player => {
+
+            io.to(player.id).emit("game-update", {
+
+              hand: room.playerHands[player.id],
+
+              topCard: room.topCard,
+
+              currentTurn: room.currentTurn,
+
+              hasDrawnCard: room.hasDrawnCard,
+
+              players: getPlayersWithHandSizes(room),
+
+              gameMessage: room.gameMessage,
+
+              direction: room.direction,
+
+              pendingDraw: room.pendingDraw,
+
+              unoState: getSafeUnoState(room)
+
+            });
+
+          });
+
+        }, 3000);
+
+      }
+
+      // =====================================
+      // WIN CONDITION
+      // =====================================
+
+      if (playerHand.length === 0) {
+
+        resetUnoState(room);
+
+        // =====================================
+        // NORMAL MODE
+        // =====================================
+
+        if (room.gameMode === "normal") {
+
+          io.to(roomId).emit("game-over", {
+
+            rankings: [
+
+              {
+                id: socket.id,
+                position: 1
+              }
+
+            ]
+
+          });
+
+          console.log("Game Over");
+
+          return;
+
+        }
+
+        // =====================================
+        // ELIMINATION MODE
+        // =====================================
+
+        const winningPlayer =
+
+          room.players.find(
+            player => player.id === socket.id
+          );
+
+        // SPECTATOR MODE
+        winningPlayer.isSpectator = true;
+
+        // SAVE WINNER
+        room.winners.push(socket.id);
+
+        room.gameMessage =
+          `${winningPlayer.username} finished!`;
+
+        // ACTIVE PLAYERS LEFT
+        const activePlayers =
+          getActivePlayers(room);
+
+        // LAST LOSER FOUND
+        if (activePlayers.length === 1) {
+
+          const rankings = [
+
+            ...room.winners.map(
+              (playerId, index) => ({
+
+                id: playerId,
+
+                position: index + 1
+
+              })
+            ),
+
+            {
+              id: activePlayers[0].id,
+
+              position:
+                room.winners.length + 1,
+
+              isLoser: true
+            }
+
+          ];
+
+          io.to(roomId).emit("game-over", {
+
+            rankings
+
+          });
+
+          console.log("Elimination Game Over");
+
+          return;
+
+        }
+
+      }
+
+      let moveSteps = 1;
+
+      // =====================================
+      // WILD +4
+      // =====================================
+
+      if (selectedCard.type === "wild4") {
+
+        room.pendingDraw += 4;
+
+        room.lastStackAmount = room.pendingDraw;
+
+        room.pendingDrawType = "wild4";
+
+        room.gameMessage =
+          `+${room.pendingDraw} Cards!`;
+
+      }
+
+      // =====================================
+      // DRAW TWO
+      // =====================================
+
+      else if (selectedCard.type === "draw2") {
+
+        room.pendingDraw += 2;
+
+        room.lastStackAmount = room.pendingDraw;
+
+        room.pendingDrawType = "draw2";
+
+        room.gameMessage =
+          `+${room.pendingDraw} Cards!`;
+
+      }
+
+
+      // =====================================
+      // REVERSE
+      // =====================================
+
+      else if (selectedCard.type === "reverse") {
+
+        room.direction *= -1;
+
+        room.gameMessage =
+          "Direction Reversed!";
+
+        // 2 ACTIVE PLAYER RULE
+        if (getActivePlayers(room).length === 2) {
+
+          moveSteps = 2;
+
+        }
+
+      }
+
+      // =====================================
+      // SKIP
+      // =====================================
+
+      else if (selectedCard.type === "skip") {
+
+        const skippedPlayerIndex =
+
+          getNextActivePlayerIndex(
+            room,
+            currentPlayerIndex
+          );
+
+        const skippedPlayer =
+          room.players[skippedPlayerIndex];
+
+        room.gameMessage =
+          `${skippedPlayer.username} was skipped!`;
+
+        moveSteps = 2;
+
+      }
+
+      // =====================================
+      // NORMAL CARD
+      // =====================================
+
+      else {
+
+        room.gameMessage = "";
+
+        room.pendingDraw = 0;
+
+        room.lastStackAmount = 0;
+
+        room.pendingDrawType = null;
+
+      }
+
+
+      // =====================================
+      // NEXT PLAYER
+      // =====================================
+
+      const nextPlayerIndex =
+
+        getNextActivePlayerIndex(
+          room,
+          currentPlayerIndex,
+          moveSteps
+        );
+
+      room.currentTurn =
+        room.players[nextPlayerIndex].id;
+
+      room.hasDrawnCard = false;
+
+      // =====================================
+      // AUTO CHECK STACK SYSTEM
+      // =====================================
+
+      if (room.pendingDraw > 0) {
+
+        resolvePendingDraw(room);
+
+      }
+
+      // =====================================
+      // SEND UPDATE
+      // =====================================
+
+      room.players.forEach(player => {
+
+        io.to(player.id).emit("game-update", {
+
+          hand: room.playerHands[player.id],
+
+          topCard: room.topCard,
+
+          currentTurn: room.currentTurn,
+
+          hasDrawnCard: room.hasDrawnCard,
+
+          players: getPlayersWithHandSizes(room),
+
+          gameMessage: room.gameMessage,
+
+          direction: room.direction,
+
+          pendingDraw: room.pendingDraw,
+
+          lastStackAmount: room.lastStackAmount || 0,
+
+          unoState: getSafeUnoState(room)
+
+
+        });
+
+      });
+
+      console.log("Card Played");
+
+    }
+
+    finally {
+
+      // =====================================
+      // ALWAYS UNLOCK
+      // =====================================
+
+      room.actionLocked = false;
+
+    }
+
+  });
+
+  // ======================================================
+  // DRAW CARD
+  // ======================================================
+
+  socket.on("draw-card", ({ roomId }) => {
+
+    const room = rooms[roomId];
+
+    if (!room) return;
+
+    // =====================================
+    // ACTION LOCK
+    // =====================================
+
+    if (room.actionLocked) {
+
+      return;
+
+    }
+
+    room.actionLocked = true;
+
+    try {
+
+      // =====================================
+      // TURN VALIDATION
+      // =====================================
+
+      if (room.currentTurn !== socket.id) {
+
+        return;
+
+      }
+
+      // INVALID HAND
+      if (!room.playerHands[socket.id]) {
+
+        return;
+
+      }
+
+      // =====================================
+      // ACCEPT STACK PENALTY
+      // =====================================
+
+      if (room.pendingDraw > 0) {
 
         for (let i = 0; i < room.pendingDraw; i++) {
 
@@ -936,11 +1454,19 @@ socket.on("play-card", ({
         }
 
         room.gameMessage =
-          `${room.players[currentPlayerIndex].username} drew ${room.pendingDraw} cards!`;
+          `${room.players.find(
+            p => p.id === socket.id
+          ).username} drew ${room.pendingDraw} cards!`;
 
         room.pendingDraw = 0;
 
         room.pendingDrawType = null;
+
+        const currentPlayerIndex =
+
+          room.players.findIndex(
+            player => player.id === socket.id
+          );
 
         const nextPlayerIndex =
 
@@ -974,10 +1500,7 @@ socket.on("play-card", ({
 
             pendingDraw: room.pendingDraw,
 
-            lastStackAmount: room.lastStackAmount || 0,
-
             unoState: getSafeUnoState(room)
-
 
           });
 
@@ -987,186 +1510,727 @@ socket.on("play-card", ({
 
       }
 
+      // =====================================
+      // NORMAL DRAW
+      // =====================================
+
+      const drawnCard =
+        safeDrawCard(room);
+
+      // NO CARD AVAILABLE
+      if (!drawnCard) {
+
+        return;
+
+      }
+
+      room.playerHands[socket.id]
+        .push(drawnCard);
+
+      room.hasDrawnCard = true;
+
+      // RESET UNO
+      if (
+
+        room.playerHands[socket.id].length > 1 &&
+
+        room.unoState.targetPlayerId === socket.id
+
+      ) {
+
+        resetUnoState(room);
+
+      }
+
+      const topCard = room.topCard;
+
+      const playerHand =
+        room.playerHands[socket.id];
+
+      const canPlay = playerHand.some(card =>
+
+        isValidMove(
+          card,
+          topCard,
+          room.pendingDraw
+        )
+
+      );
+
+      // =====================================
+      // AUTO SKIP
+      // =====================================
+
+      if (!canPlay) {
+
+        const currentPlayerIndex =
+
+          room.players.findIndex(
+            player => player.id === socket.id
+          );
+
+        const nextPlayerIndex =
+
+          getNextActivePlayerIndex(
+            room,
+            currentPlayerIndex
+          );
+
+        room.currentTurn =
+          room.players[nextPlayerIndex].id;
+
+        room.hasDrawnCard = false;
+
+      }
+
+      // =====================================
+      // SEND UPDATE
+      // =====================================
+
+      room.players.forEach(player => {
+
+        io.to(player.id).emit("game-update", {
+
+          hand: room.playerHands[player.id],
+
+          topCard: room.topCard,
+
+          currentTurn: room.currentTurn,
+
+          hasDrawnCard: room.hasDrawnCard,
+
+          players: getPlayersWithHandSizes(room),
+
+          gameMessage: room.gameMessage,
+
+          direction: room.direction,
+
+          pendingDraw: room.pendingDraw,
+
+          unoState: getSafeUnoState(room)
+
+        });
+
+      });
+
+      console.log("Card Drawn");
+
     }
 
+    finally {
+
+      // =====================================
+      // ALWAYS UNLOCK
+      // =====================================
+
+      room.actionLocked = false;
+
+    }
+
+  });
+
+  // ======================================================
+  // SKIP TURN
+  // ======================================================
+
+  socket.on("skip-turn", ({ roomId }) => {
+
+    const room = rooms[roomId];
+
+    if (!room) return;
+
     // =====================================
-    // VALIDATE MOVE
+    // ACTION LOCK
     // =====================================
 
-    const validMove = isValidMove(
-      selectedCard,
-      topCard,
-      room.pendingDraw
+    if (room.actionLocked) {
+
+      return;
+
+    }
+
+    room.actionLocked = true;
+
+    try {
+
+      // =====================================
+      // TURN VALIDATION
+      // =====================================
+
+      if (room.currentTurn !== socket.id) {
+
+        return;
+
+      }
+
+      // MUST DRAW FIRST
+      if (!room.hasDrawnCard) {
+
+        return;
+
+      }
+
+      // INVALID HAND
+      if (!room.playerHands[socket.id]) {
+
+        return;
+
+      }
+
+      const currentPlayerIndex =
+
+        room.players.findIndex(
+          player => player.id === socket.id
+        );
+
+      // INVALID PLAYER
+      if (currentPlayerIndex === -1) {
+
+        return;
+
+      }
+
+      const nextPlayerIndex =
+
+        getNextActivePlayerIndex(
+          room,
+          currentPlayerIndex
+        );
+
+      room.currentTurn =
+        room.players[nextPlayerIndex].id;
+
+      room.hasDrawnCard = false;
+
+      // =====================================
+      // SEND UPDATE
+      // =====================================
+
+      room.players.forEach(player => {
+
+        io.to(player.id).emit("game-update", {
+
+          hand: room.playerHands[player.id],
+
+          topCard: room.topCard,
+
+          currentTurn: room.currentTurn,
+
+          hasDrawnCard: room.hasDrawnCard,
+
+          players: getPlayersWithHandSizes(room),
+
+          gameMessage: room.gameMessage,
+
+          direction: room.direction,
+
+          pendingDraw: room.pendingDraw,
+
+          unoState: getSafeUnoState(room)
+
+        });
+
+      });
+
+      console.log("Turn Skipped");
+
+    }
+
+    finally {
+
+      // =====================================
+      // ALWAYS UNLOCK
+      // =====================================
+
+      room.actionLocked = false;
+
+    }
+
+  });
+
+  // ======================================================
+  // CALL-UNO
+  // ======================================================
+
+  socket.on("call-uno", ({ roomId }) => {
+
+    console.log("UNO BUTTON PRESSED");
+
+    const room = rooms[roomId];
+
+    if (!room) return;
+
+    // =====================================
+    // ACTION LOCK
+    // =====================================
+
+    if (room.actionLocked) {
+
+      return;
+
+    }
+
+    room.actionLocked = true;
+
+    try {
+
+      const unoState = room.unoState;
+
+      // INVALID UNO STATE
+      if (!unoState) {
+
+        return;
+
+      }
+
+      // NO ACTIVE UNO
+      if (!unoState.targetPlayerId) {
+
+        return;
+
+      }
+
+      // TARGET PLAYER EXISTS?
+      const targetPlayer =
+
+        room.players.find(
+          p => p.id === unoState.targetPlayerId
+        );
+
+      if (!targetPlayer) {
+
+        resetUnoState(room);
+
+        return;
+
+      }
+
+      // =====================================
+      // TARGET PLAYER CALLED UNO
+      // =====================================
+
+      if (
+
+        socket.id === unoState.targetPlayerId &&
+
+        unoState.canCallUno
+
+      ) {
+
+        clearTimeout(
+          unoState.timeout
+        );
+
+        room.gameMessage =
+          `${targetPlayer.username} called UNO!`;
+
+        resetUnoState(room);
+
+      }
+
+      // =====================================
+      // OTHER PLAYER CATCHES UNO
+      // =====================================
+
+      else if (
+
+        socket.id !== unoState.targetPlayerId &&
+
+        unoState.canCatch
+
+      ) {
+
+        const punishedHand =
+
+          room.playerHands[
+          unoState.targetPlayerId
+          ];
+
+        // INVALID HAND
+        if (!punishedHand) {
+
+          resetUnoState(room);
+
+          return;
+
+        }
+
+        // DRAW PENALTY
+        for (let i = 0; i < 2; i++) {
+
+          const drawnCard =
+            safeDrawCard(room);
+
+          if (drawnCard) {
+
+            punishedHand.push(
+              drawnCard
+            );
+
+          }
+
+        }
+
+        room.gameMessage =
+          `${targetPlayer.username} forgot UNO! +2 cards`;
+
+        resetUnoState(room);
+
+      }
+
+      // =====================================
+      // UNO UPDATE
+      // =====================================
+
+      io.to(roomId).emit(
+        "uno-update",
+        getSafeUnoState(room)
+      );
+
+      // =====================================
+      // GAME UPDATE
+      // =====================================
+
+      room.players.forEach(player => {
+
+        io.to(player.id).emit("game-update", {
+
+          hand: room.playerHands[player.id],
+
+          topCard: room.topCard,
+
+          currentTurn: room.currentTurn,
+
+          hasDrawnCard: room.hasDrawnCard,
+
+          players: getPlayersWithHandSizes(room),
+
+          gameMessage: room.gameMessage,
+
+          direction: room.direction,
+
+          pendingDraw: room.pendingDraw,
+
+          unoState: getSafeUnoState(room)
+
+        });
+
+      });
+
+    }
+
+    finally {
+
+      // =====================================
+      // ALWAYS UNLOCK
+      // =====================================
+
+      room.actionLocked = false;
+
+    }
+
+  });
+
+  // ======================================================
+  // REQUEST REMATCH
+  // ======================================================
+
+  socket.on("request-rematch", ({ roomId }) => {
+
+    const room = rooms[roomId];
+
+    if (!room) return;
+
+    // ALREADY VOTED
+    if (
+
+      room.rematchVotes.includes(
+        socket.id
+      )
+
+    ) {
+
+      return;
+
+    }
+
+    room.rematchVotes.push(
+      socket.id
     );
 
-    if (!validMove) {
+    // ACTIVE PLAYERS
+    const activePlayers =
+
+      room.players.map(
+        player => player.id
+      );
+
+    // EVERYONE ACCEPTED
+    const everyoneAccepted =
+
+      activePlayers.every(
+        playerId =>
+
+          room.rematchVotes.includes(
+            playerId
+          )
+      );
+
+    if (!everyoneAccepted) {
+
+      io.to(roomId).emit(
+        "game-message",
+        "Waiting for players..."
+      );
 
       return;
 
     }
 
     // =====================================
-    // REMOVE CARD
+    // RESET ROOM
     // =====================================
 
-    playerHand.splice(cardIndex, 1);
+    room.rematchVotes = [];
 
-    // =====================================
-    // MOVE OLD TOP CARD
-    // =====================================
+    room.winners = [];
 
-    const previousTopCard =
-      room.topCard;
+    room.pendingDraw = 0;
 
-    if (previousTopCard) {
+    room.pendingDrawType = null;
 
-      room.discardPile.push(
-        previousTopCard
-      );
+    room.direction = 1;
 
-    }
+    room.hasDrawnCard = false;
 
-    // =====================================
-    // UPDATE TOP CARD
-    // =====================================
+    resetUnoState(room);
 
-    room.topCard = selectedCard;
+    // RESET PLAYERS
+    room.players.forEach(player => {
 
-    // =====================================
-    // WILD COLOR
-    // =====================================
+      player.isSpectator = false;
 
-    if (
+    });
 
-      selectedCard.type === "wild" ||
+    // NEW DECK
+    room.deck = generateDeck();
 
-      selectedCard.type === "wild4"
+    room.discardPile = [];
 
-    ) {
+    room.playerHands = {};
 
-      room.topCard = {
+    // DEAL CARDS
+    room.players.forEach(player => {
 
-        ...selectedCard,
+      room.playerHands[player.id] = [];
 
-        chosenColor
+      for (let i = 0; i < 5; i++) {
 
-      };
+        const drawnCard =
+          safeDrawCard(room);
 
-    }
+        if (drawnCard) {
 
-    // =====================================
-    // UNO CHECK
-    // =====================================
+          room.playerHands[player.id]
+            .push(drawnCard);
 
-    if (playerHand.length === 1) {
-
-      resetUnoState(room);
-
-      room.unoState.targetPlayerId =
-        socket.id;
-
-      room.unoState.canCallUno = true;
-
-      room.unoState.canCatch = false;
-
-      room.gameMessage =
-        `${room.players[currentPlayerIndex].username} has UNO!`;
-
-      // START TIMER
-      room.unoState.timeout = setTimeout(() => {
-
-        room.unoState.canCatch = true;
-
-        room.gameMessage =
-          "UNO can now be caught!";
-
-        room.players.forEach(player => {
-
-          io.to(player.id).emit("game-update", {
-
-            hand: room.playerHands[player.id],
-
-            topCard: room.topCard,
-
-            currentTurn: room.currentTurn,
-
-            hasDrawnCard: room.hasDrawnCard,
-
-            players: getPlayersWithHandSizes(room),
-
-            gameMessage: room.gameMessage,
-
-            direction: room.direction,
-
-            pendingDraw: room.pendingDraw,
-
-            unoState: getSafeUnoState(room)
-
-          });
-
-        });
-
-      }, 3000);
-
-    }
-
-    // =====================================
-    // WIN CONDITION
-    // =====================================
-
-    if (playerHand.length === 0) {
-
-      resetUnoState(room);
-
-      // =====================================
-      // NORMAL MODE
-      // =====================================
-
-      if (room.gameMode === "normal") {
-
-        io.to(roomId).emit("game-over", {
-
-          rankings: [
-
-            {
-              id: socket.id,
-              position: 1
-            }
-
-          ]
-
-        });
-
-        console.log("Game Over");
-
-        return;
+        }
 
       }
 
-      // =====================================
-      // ELIMINATION MODE
-      // =====================================
+    });
 
-      const winningPlayer =
+    // STARTING CARD
+    while (true) {
+
+      const card =
+        safeDrawCard(room);
+
+      if (!card) break;
+
+      if (card.type === "number") {
+
+        room.topCard = card;
+
+        break;
+
+      }
+
+      room.deck.unshift(card);
+
+      room.deck =
+        shuffleDeck(room.deck);
+
+    }
+
+    // FIRST TURN
+    room.currentTurn =
+      room.players[0].id;
+
+    room.gameStarted = true;
+
+    // =====================================
+    // RESTART GAME
+    // =====================================
+
+    room.players.forEach(player => {
+
+      io.to(player.id).emit("game-started", {
+
+        hand: room.playerHands[player.id],
+
+        topCard: room.topCard,
+
+        currentTurn: room.currentTurn,
+
+        hasDrawnCard: room.hasDrawnCard,
+
+        players: getPlayersWithHandSizes(room),
+
+        gameMessage: "Rematch Started!",
+
+        direction: room.direction,
+
+        pendingDraw: room.pendingDraw,
+
+        unoState: getSafeUnoState(room)
+
+      });
+
+    });
+
+    console.log("Rematch Started");
+
+  });
+
+  // ======================================================
+  // DISCONNECT
+  // ======================================================
+
+  socket.on("disconnect", () => {
+
+    for (const roomId in rooms) {
+
+      const room = rooms[roomId];
+
+      // PLAYER EXISTS?
+      const disconnectedPlayer =
 
         room.players.find(
           player => player.id === socket.id
         );
 
-      // SPECTATOR MODE
-      winningPlayer.isSpectator = true;
+      if (!disconnectedPlayer) continue;
 
-      // SAVE WINNER
-      room.winners.push(socket.id);
+      // =====================================
+      // CLEAR UNO STATE
+      // =====================================
 
-      room.gameMessage =
-        `${winningPlayer.username} finished!`;
+      if (
 
-      // ACTIVE PLAYERS LEFT
+        room.unoState.targetPlayerId === socket.id
+
+      ) {
+
+        resetUnoState(room);
+
+      }
+
+      // =====================================
+      // CLEAR PENDING DRAW
+      // =====================================
+
+      if (
+
+        room.currentTurn === socket.id &&
+
+        room.pendingDraw > 0
+
+      ) {
+
+        room.pendingDraw = 0;
+
+        room.pendingDrawType = null;
+
+      }
+
+      // =====================================
+      // WAS CURRENT TURN?
+      // =====================================
+
+      const wasCurrentTurn =
+
+        room.currentTurn === socket.id;
+
+      // =====================================
+      // REMOVE PLAYER
+      // =====================================
+
+      room.players = room.players.filter(
+
+        player => player.id !== socket.id
+
+      );
+
+      delete room.playerHands[socket.id];
+
+      // =====================================
+      // ROOM EMPTY
+      // =====================================
+
+      if (room.players.length === 0) {
+
+        delete rooms[roomId];
+
+        console.log(
+          "Room Deleted:",
+          roomId
+        );
+
+        continue;
+
+      }
+
+      // =====================================
+      // HOST MIGRATION
+      // =====================================
+
+      if (
+
+        room.host === socket.id
+
+      ) {
+
+        room.host =
+          room.players[0].id;
+
+      }
+
+      // =====================================
+      // FIX TURN
+      // =====================================
+
+      if (wasCurrentTurn) {
+
+        const activePlayers =
+          getActivePlayers(room);
+
+        if (activePlayers.length > 0) {
+
+          room.currentTurn =
+            activePlayers[0].id;
+
+        }
+
+      }
+
+      // =====================================
+      // GAME END CHECK
+      // =====================================
+
       const activePlayers =
         getActivePlayers(room);
 
-      // LAST LOSER FOUND
       if (activePlayers.length === 1) {
 
         const rankings = [
@@ -1198,287 +2262,26 @@ socket.on("play-card", ({
 
         });
 
-        console.log("Elimination Game Over");
+        console.log(
+          "Game Ended By Disconnect"
+        );
 
         return;
 
       }
 
-    }
+      // =====================================
+      // UPDATE PLAYERS
+      // =====================================
 
-    let moveSteps = 1;
-
-    // =====================================
-    // WILD +4
-    // =====================================
-
-    if (selectedCard.type === "wild4") {
-
-      room.pendingDraw += 4;
-
-      room.lastStackAmount = room.pendingDraw;
-
-      room.pendingDrawType = "wild4";
-
-      room.gameMessage =
-        `+${room.pendingDraw} Cards!`;
-
-    }
-
-    // =====================================
-    // DRAW TWO
-    // =====================================
-
-    else if (selectedCard.type === "draw2") {
-
-      room.pendingDraw += 2;
-
-      room.lastStackAmount = room.pendingDraw;
-
-      room.pendingDrawType = "draw2";
-
-      room.gameMessage =
-        `+${room.pendingDraw} Cards!`;
-
-    }
-
-
-    // =====================================
-    // REVERSE
-    // =====================================
-
-    else if (selectedCard.type === "reverse") {
-
-      room.direction *= -1;
-
-      room.gameMessage =
-        "Direction Reversed!";
-
-      // 2 ACTIVE PLAYER RULE
-      if (getActivePlayers(room).length === 2) {
-
-        moveSteps = 2;
-
-      }
-
-    }
-
-    // =====================================
-    // SKIP
-    // =====================================
-
-    else if (selectedCard.type === "skip") {
-
-      const skippedPlayerIndex =
-
-        getNextActivePlayerIndex(
-          room,
-          currentPlayerIndex
-        );
-
-      const skippedPlayer =
-        room.players[skippedPlayerIndex];
-
-      room.gameMessage =
-        `${skippedPlayer.username} was skipped!`;
-
-      moveSteps = 2;
-
-    }
-
-    // =====================================
-    // NORMAL CARD
-    // =====================================
-
-    else {
-
-      room.gameMessage = "";
-
-      room.pendingDraw = 0;
-
-      room.lastStackAmount = 0;
-
-      room.pendingDrawType = null;
-
-    }
-
-
-    // =====================================
-    // NEXT PLAYER
-    // =====================================
-
-    const nextPlayerIndex =
-
-      getNextActivePlayerIndex(
-        room,
-        currentPlayerIndex,
-        moveSteps
+      io.to(roomId).emit(
+        "update-players",
+        room.players
       );
 
-    room.currentTurn =
-      room.players[nextPlayerIndex].id;
-
-    room.hasDrawnCard = false;
-
-    // =====================================
-    // AUTO CHECK STACK SYSTEM
-    // =====================================
-
-    if (room.pendingDraw > 0) {
-
-      resolvePendingDraw(room);
-
-    }
-
-    // =====================================
-    // SEND UPDATE
-    // =====================================
-
-    room.players.forEach(player => {
-
-      io.to(player.id).emit("game-update", {
-
-        hand: room.playerHands[player.id],
-
-        topCard: room.topCard,
-
-        currentTurn: room.currentTurn,
-
-        hasDrawnCard: room.hasDrawnCard,
-
-        players: getPlayersWithHandSizes(room),
-
-        gameMessage: room.gameMessage,
-
-        direction: room.direction,
-
-        pendingDraw: room.pendingDraw,
-
-        lastStackAmount: room.lastStackAmount || 0,
-
-        unoState: getSafeUnoState(room)
-
-
-      });
-
-    });
-
-    console.log("Card Played");
-
-  }
-
-  finally {
-
-    // =====================================
-    // ALWAYS UNLOCK
-    // =====================================
-
-    room.actionLocked = false;
-
-  }
-
-});
-
- // ======================================================
-// DRAW CARD
-// ======================================================
-
-socket.on("draw-card", ({ roomId }) => {
-
-  const room = rooms[roomId];
-
-  if (!room) return;
-
-  // =====================================
-  // ACTION LOCK
-  // =====================================
-
-  if (room.actionLocked) {
-
-    return;
-
-  }
-
-  room.actionLocked = true;
-
-  try {
-
-    // =====================================
-    // TURN VALIDATION
-    // =====================================
-
-    if (room.currentTurn !== socket.id) {
-
-      return;
-
-    }
-
-    // INVALID HAND
-    if (!room.playerHands[socket.id]) {
-
-      return;
-
-    }
-
-    // =====================================
-    // ACCEPT STACK PENALTY
-    // =====================================
-
-    if (room.pendingDraw > 0) {
-
-      for (let i = 0; i < room.pendingDraw; i++) {
-
-        const drawnCard =
-          safeDrawCard(room);
-
-        if (drawnCard) {
-
-          room.playerHands[socket.id]
-            .push(drawnCard);
-
-        }
-
-      }
-
-      // RESET UNO
-      if (
-
-        room.playerHands[socket.id].length > 1 &&
-
-        room.unoState.targetPlayerId === socket.id
-
-      ) {
-
-        resetUnoState(room);
-
-      }
-
-      room.gameMessage =
-        `${room.players.find(
-          p => p.id === socket.id
-        ).username} drew ${room.pendingDraw} cards!`;
-
-      room.pendingDraw = 0;
-
-      room.pendingDrawType = null;
-
-      const currentPlayerIndex =
-
-        room.players.findIndex(
-          player => player.id === socket.id
-        );
-
-      const nextPlayerIndex =
-
-        getNextActivePlayerIndex(
-          room,
-          currentPlayerIndex
-        );
-
-      room.currentTurn =
-        room.players[nextPlayerIndex].id;
-
-      room.hasDrawnCard = false;
+      // =====================================
+      // UPDATE GAME
+      // =====================================
 
       room.players.forEach(player => {
 
@@ -1494,7 +2297,8 @@ socket.on("draw-card", ({ roomId }) => {
 
           players: getPlayersWithHandSizes(room),
 
-          gameMessage: room.gameMessage,
+          gameMessage:
+            `${disconnectedPlayer.username} disconnected`,
 
           direction: room.direction,
 
@@ -1506,818 +2310,14 @@ socket.on("draw-card", ({ roomId }) => {
 
       });
 
-      return;
-
     }
 
-    // =====================================
-    // NORMAL DRAW
-    // =====================================
-
-    const drawnCard =
-      safeDrawCard(room);
-
-    // NO CARD AVAILABLE
-    if (!drawnCard) {
-
-      return;
-
-    }
-
-    room.playerHands[socket.id]
-      .push(drawnCard);
-
-    room.hasDrawnCard = true;
-
-    // RESET UNO
-    if (
-
-      room.playerHands[socket.id].length > 1 &&
-
-      room.unoState.targetPlayerId === socket.id
-
-    ) {
-
-      resetUnoState(room);
-
-    }
-
-    const topCard = room.topCard;
-
-    const playerHand =
-      room.playerHands[socket.id];
-
-    const canPlay = playerHand.some(card =>
-
-      isValidMove(
-        card,
-        topCard,
-        room.pendingDraw
-      )
-
-    );
-
-    // =====================================
-    // AUTO SKIP
-    // =====================================
-
-    if (!canPlay) {
-
-      const currentPlayerIndex =
-
-        room.players.findIndex(
-          player => player.id === socket.id
-        );
-
-      const nextPlayerIndex =
-
-        getNextActivePlayerIndex(
-          room,
-          currentPlayerIndex
-        );
-
-      room.currentTurn =
-        room.players[nextPlayerIndex].id;
-
-      room.hasDrawnCard = false;
-
-    }
-
-    // =====================================
-    // SEND UPDATE
-    // =====================================
-
-    room.players.forEach(player => {
-
-      io.to(player.id).emit("game-update", {
-
-        hand: room.playerHands[player.id],
-
-        topCard: room.topCard,
-
-        currentTurn: room.currentTurn,
-
-        hasDrawnCard: room.hasDrawnCard,
-
-        players: getPlayersWithHandSizes(room),
-
-        gameMessage: room.gameMessage,
-
-        direction: room.direction,
-
-        pendingDraw: room.pendingDraw,
-
-        unoState: getSafeUnoState(room)
-
-      });
-
-    });
-
-    console.log("Card Drawn");
-
-  }
-
-  finally {
-
-    // =====================================
-    // ALWAYS UNLOCK
-    // =====================================
-
-    room.actionLocked = false;
-
-  }
-
-});
-
-// ======================================================
-// SKIP TURN
-// ======================================================
-
-socket.on("skip-turn", ({ roomId }) => {
-
-  const room = rooms[roomId];
-
-  if (!room) return;
-
-  // =====================================
-  // ACTION LOCK
-  // =====================================
-
-  if (room.actionLocked) {
-
-    return;
-
-  }
-
-  room.actionLocked = true;
-
-  try {
-
-    // =====================================
-    // TURN VALIDATION
-    // =====================================
-
-    if (room.currentTurn !== socket.id) {
-
-      return;
-
-    }
-
-    // MUST DRAW FIRST
-    if (!room.hasDrawnCard) {
-
-      return;
-
-    }
-
-    // INVALID HAND
-    if (!room.playerHands[socket.id]) {
-
-      return;
-
-    }
-
-    const currentPlayerIndex =
-
-      room.players.findIndex(
-        player => player.id === socket.id
-      );
-
-    // INVALID PLAYER
-    if (currentPlayerIndex === -1) {
-
-      return;
-
-    }
-
-    const nextPlayerIndex =
-
-      getNextActivePlayerIndex(
-        room,
-        currentPlayerIndex
-      );
-
-    room.currentTurn =
-      room.players[nextPlayerIndex].id;
-
-    room.hasDrawnCard = false;
-
-    // =====================================
-    // SEND UPDATE
-    // =====================================
-
-    room.players.forEach(player => {
-
-      io.to(player.id).emit("game-update", {
-
-        hand: room.playerHands[player.id],
-
-        topCard: room.topCard,
-
-        currentTurn: room.currentTurn,
-
-        hasDrawnCard: room.hasDrawnCard,
-
-        players: getPlayersWithHandSizes(room),
-
-        gameMessage: room.gameMessage,
-
-        direction: room.direction,
-
-        pendingDraw: room.pendingDraw,
-
-        unoState: getSafeUnoState(room)
-
-      });
-
-    });
-
-    console.log("Turn Skipped");
-
-  }
-
-  finally {
-
-    // =====================================
-    // ALWAYS UNLOCK
-    // =====================================
-
-    room.actionLocked = false;
-
-  }
-
-});
-
-// ======================================================
-// CALL-UNO
-// ======================================================
-
-socket.on("call-uno", ({ roomId }) => {
-
-  console.log("UNO BUTTON PRESSED");
-
-  const room = rooms[roomId];
-
-  if (!room) return;
-
-  // =====================================
-  // ACTION LOCK
-  // =====================================
-
-  if (room.actionLocked) {
-
-    return;
-
-  }
-
-  room.actionLocked = true;
-
-  try {
-
-    const unoState = room.unoState;
-
-    // INVALID UNO STATE
-    if (!unoState) {
-
-      return;
-
-    }
-
-    // NO ACTIVE UNO
-    if (!unoState.targetPlayerId) {
-
-      return;
-
-    }
-
-    // TARGET PLAYER EXISTS?
-    const targetPlayer =
-
-      room.players.find(
-        p => p.id === unoState.targetPlayerId
-      );
-
-    if (!targetPlayer) {
-
-      resetUnoState(room);
-
-      return;
-
-    }
-
-    // =====================================
-    // TARGET PLAYER CALLED UNO
-    // =====================================
-
-    if (
-
-      socket.id === unoState.targetPlayerId &&
-
-      unoState.canCallUno
-
-    ) {
-
-      clearTimeout(
-        unoState.timeout
-      );
-
-      room.gameMessage =
-        `${targetPlayer.username} called UNO!`;
-
-      resetUnoState(room);
-
-    }
-
-    // =====================================
-    // OTHER PLAYER CATCHES UNO
-    // =====================================
-
-    else if (
-
-      socket.id !== unoState.targetPlayerId &&
-
-      unoState.canCatch
-
-    ) {
-
-      const punishedHand =
-
-        room.playerHands[
-          unoState.targetPlayerId
-        ];
-
-      // INVALID HAND
-      if (!punishedHand) {
-
-        resetUnoState(room);
-
-        return;
-
-      }
-
-      // DRAW PENALTY
-      for (let i = 0; i < 2; i++) {
-
-        const drawnCard =
-          safeDrawCard(room);
-
-        if (drawnCard) {
-
-          punishedHand.push(
-            drawnCard
-          );
-
-        }
-
-      }
-
-      room.gameMessage =
-        `${targetPlayer.username} forgot UNO! +2 cards`;
-
-      resetUnoState(room);
-
-    }
-
-    // =====================================
-    // UNO UPDATE
-    // =====================================
-
-    io.to(roomId).emit(
-      "uno-update",
-      getSafeUnoState(room)
-    );
-
-    // =====================================
-    // GAME UPDATE
-    // =====================================
-
-    room.players.forEach(player => {
-
-      io.to(player.id).emit("game-update", {
-
-        hand: room.playerHands[player.id],
-
-        topCard: room.topCard,
-
-        currentTurn: room.currentTurn,
-
-        hasDrawnCard: room.hasDrawnCard,
-
-        players: getPlayersWithHandSizes(room),
-
-        gameMessage: room.gameMessage,
-
-        direction: room.direction,
-
-        pendingDraw: room.pendingDraw,
-
-        unoState: getSafeUnoState(room)
-
-      });
-
-    });
-
-  }
-
-  finally {
-
-    // =====================================
-    // ALWAYS UNLOCK
-    // =====================================
-
-    room.actionLocked = false;
-
-  }
-
-});
-
-// ======================================================
-// REQUEST REMATCH
-// ======================================================
-
-socket.on("request-rematch", ({ roomId }) => {
-
-  const room = rooms[roomId];
-
-  if (!room) return;
-
-  // ALREADY VOTED
-  if (
-
-    room.rematchVotes.includes(
+    console.log(
+      "User Disconnected:",
       socket.id
-    )
-
-  ) {
-
-    return;
-
-  }
-
-  room.rematchVotes.push(
-    socket.id
-  );
-
-  // ACTIVE PLAYERS
-  const activePlayers =
-
-    room.players.map(
-      player => player.id
     );
-
-  // EVERYONE ACCEPTED
-  const everyoneAccepted =
-
-    activePlayers.every(
-      playerId =>
-
-        room.rematchVotes.includes(
-          playerId
-        )
-    );
-
-  if (!everyoneAccepted) {
-
-    io.to(roomId).emit(
-      "game-message",
-      "Waiting for players..."
-    );
-
-    return;
-
-  }
-
-  // =====================================
-  // RESET ROOM
-  // =====================================
-
-  room.rematchVotes = [];
-
-  room.winners = [];
-
-  room.pendingDraw = 0;
-
-  room.pendingDrawType = null;
-
-  room.direction = 1;
-
-  room.hasDrawnCard = false;
-
-  resetUnoState(room);
-
-  // RESET PLAYERS
-  room.players.forEach(player => {
-
-    player.isSpectator = false;
 
   });
-
-  // NEW DECK
-  room.deck = generateDeck();
-
-  room.discardPile = [];
-
-  room.playerHands = {};
-
-  // DEAL CARDS
-  room.players.forEach(player => {
-
-    room.playerHands[player.id] = [];
-
-    for (let i = 0; i < 5; i++) {
-
-      const drawnCard =
-        safeDrawCard(room);
-
-      if (drawnCard) {
-
-        room.playerHands[player.id]
-          .push(drawnCard);
-
-      }
-
-    }
-
-  });
-
-  // STARTING CARD
-  while (true) {
-
-    const card =
-      safeDrawCard(room);
-
-    if (!card) break;
-
-    if (card.type === "number") {
-
-      room.topCard = card;
-
-      break;
-
-    }
-
-    room.deck.unshift(card);
-
-    room.deck =
-      shuffleDeck(room.deck);
-
-  }
-
-  // FIRST TURN
-  room.currentTurn =
-    room.players[0].id;
-
-  room.gameStarted = true;
-
-  // =====================================
-  // RESTART GAME
-  // =====================================
-
-  room.players.forEach(player => {
-
-    io.to(player.id).emit("game-started", {
-
-      hand: room.playerHands[player.id],
-
-      topCard: room.topCard,
-
-      currentTurn: room.currentTurn,
-
-      hasDrawnCard: room.hasDrawnCard,
-
-      players: getPlayersWithHandSizes(room),
-
-      gameMessage: "Rematch Started!",
-
-      direction: room.direction,
-
-      pendingDraw: room.pendingDraw,
-
-      unoState: getSafeUnoState(room)
-
-    });
-
-  });
-
-  console.log("Rematch Started");
-
-});
-
-// ======================================================
-// DISCONNECT
-// ======================================================
-
-socket.on("disconnect", () => {
-
-  for (const roomId in rooms) {
-
-    const room = rooms[roomId];
-
-    // PLAYER EXISTS?
-    const disconnectedPlayer =
-
-      room.players.find(
-        player => player.id === socket.id
-      );
-
-    if (!disconnectedPlayer) continue;
-
-    // =====================================
-    // CLEAR UNO STATE
-    // =====================================
-
-    if (
-
-      room.unoState.targetPlayerId === socket.id
-
-    ) {
-
-      resetUnoState(room);
-
-    }
-
-    // =====================================
-    // CLEAR PENDING DRAW
-    // =====================================
-
-    if (
-
-      room.currentTurn === socket.id &&
-
-      room.pendingDraw > 0
-
-    ) {
-
-      room.pendingDraw = 0;
-
-      room.pendingDrawType = null;
-
-    }
-
-    // =====================================
-    // WAS CURRENT TURN?
-    // =====================================
-
-    const wasCurrentTurn =
-
-      room.currentTurn === socket.id;
-
-    // =====================================
-    // REMOVE PLAYER
-    // =====================================
-
-    room.players = room.players.filter(
-
-      player => player.id !== socket.id
-
-    );
-
-    delete room.playerHands[socket.id];
-
-    // =====================================
-    // ROOM EMPTY
-    // =====================================
-
-    if (room.players.length === 0) {
-
-      delete rooms[roomId];
-
-      console.log(
-        "Room Deleted:",
-        roomId
-      );
-
-      continue;
-
-    }
-
-    // =====================================
-    // HOST MIGRATION
-    // =====================================
-
-    if (
-
-      room.host === socket.id
-
-    ) {
-
-      room.host =
-        room.players[0].id;
-
-    }
-
-    // =====================================
-    // FIX TURN
-    // =====================================
-
-    if (wasCurrentTurn) {
-
-      const activePlayers =
-        getActivePlayers(room);
-
-      if (activePlayers.length > 0) {
-
-        room.currentTurn =
-          activePlayers[0].id;
-
-      }
-
-    }
-
-    // =====================================
-    // GAME END CHECK
-    // =====================================
-
-    const activePlayers =
-      getActivePlayers(room);
-
-    if (activePlayers.length === 1) {
-
-      const rankings = [
-
-        ...room.winners.map(
-          (playerId, index) => ({
-
-            id: playerId,
-
-            position: index + 1
-
-          })
-        ),
-
-        {
-          id: activePlayers[0].id,
-
-          position:
-            room.winners.length + 1,
-
-          isLoser: true
-        }
-
-      ];
-
-      io.to(roomId).emit("game-over", {
-
-        rankings
-
-      });
-
-      console.log(
-        "Game Ended By Disconnect"
-      );
-
-      return;
-
-    }
-
-    // =====================================
-    // UPDATE PLAYERS
-    // =====================================
-
-    io.to(roomId).emit(
-      "update-players",
-      room.players
-    );
-
-    // =====================================
-    // UPDATE GAME
-    // =====================================
-
-    room.players.forEach(player => {
-
-      io.to(player.id).emit("game-update", {
-
-        hand: room.playerHands[player.id],
-
-        topCard: room.topCard,
-
-        currentTurn: room.currentTurn,
-
-        hasDrawnCard: room.hasDrawnCard,
-
-        players: getPlayersWithHandSizes(room),
-
-        gameMessage:
-          `${disconnectedPlayer.username} disconnected`,
-
-        direction: room.direction,
-
-        pendingDraw: room.pendingDraw,
-
-        unoState: getSafeUnoState(room)
-
-      });
-
-    });
-
-  }
-
-  console.log(
-    "User Disconnected:",
-    socket.id
-  );
-
-});
 });
 
 // ======================================================
