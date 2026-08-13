@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 
 function GameTable({ children }) {
 
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isPortraitMobile, setIsPortraitMobile] = useState(false);
   const [forceRotate, setForceRotate] = useState(true);
 

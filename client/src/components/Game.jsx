@@ -39,7 +39,6 @@ function Game({
   const [showSkipEffect, setShowSkipEffect] = useState(false);
 
   const [unoPopups, setUnoPopups] = useState({});
-  const [copyStatus, setCopyStatus] = useState("");
   const [isMuted, setIsMuted] = useState(sounds.isMuted());
 
   // UNO CALL & PENALTY SOCKET LISTENERS (ONE-SHOT POPUP ON BUTTON PRESS)
