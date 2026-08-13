@@ -70,6 +70,8 @@ function Game({
             ? topCard.value
             : topCard.type,
 
+        chosenColor: topCard.chosenColor || null,
+
         rotation: 0
       };
 
@@ -100,6 +102,8 @@ function Game({
         topCard.type === "number"
           ? topCard.value
           : topCard.type,
+
+      chosenColor: topCard.chosenColor || null,
 
       rotation:
         Math.random() * 16 - 8

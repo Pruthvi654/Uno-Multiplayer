@@ -168,6 +168,7 @@ function CenterPile({
                         value={card.value}
                         tableCard={true}
                         pileCard={true}
+                        chosenColor={card.chosenColor}
                       />
 
                     </div>
