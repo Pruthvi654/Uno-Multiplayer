@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 function GameTable({ children }) {
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [showLandscapeHint, setShowLandscapeHint] = useState(false);
+  const [isPortraitMobile, setIsPortraitMobile] = useState(false);
+  const [forceRotate, setForceRotate] = useState(true);
 
   useEffect(() => {
     const checkOrientation = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      setShowLandscapeHint(w < 600 && h > w);
+      setIsPortraitMobile(w < 768 && h > w);
     };
     checkOrientation();
     window.addEventListener("resize", checkOrientation);
@@ -19,6 +20,8 @@ function GameTable({ children }) {
       window.removeEventListener("orientationchange", checkOrientation);
     };
   }, []);
+
+  const isRotated = isPortraitMobile && forceRotate;
 
   return (
 
@@ -159,34 +162,36 @@ function GameTable({ children }) {
         }}
       />
 
-      {/* LANDSCAPE HINT FOR PORTRAIT PHONES */}
-      {showLandscapeHint && (
-        <div className="absolute top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-black/80 backdrop-blur-sm py-2 text-xs text-yellow-300 font-semibold tracking-wide pointer-events-none">
+      {/* ROTATION TOGGLE FOR PORTRAIT MOBILE */}
+      {isPortraitMobile && (
+        <button
+          onClick={() => setForceRotate(!forceRotate)}
+          className="absolute top-2 right-2 z-[9999] px-3 py-1 bg-black/70 border border-yellow-400/50 rounded-full text-xs font-bold text-yellow-300 shadow-lg flex items-center gap-1.5 backdrop-blur-md hover:bg-black/90 transition"
+        >
           <span>📱</span>
-          <span>Rotate to landscape for the best experience</span>
-        </div>
+          <span>{forceRotate ? "Landscape View On" : "Rotate Landscape"}</span>
+        </button>
       )}
 
       {/* MAIN TABLE */}
 
       <div
-        className="
+        className={`
           relative
-          w-[92vw]
-          h-[92vh]
-
-          rounded-[50px]
-
-          border
+          transition-all
+          duration-300
+          border-0 sm:border
           border-white/10
-
           bg-white/5
           backdrop-blur-md
-
           shadow-[0_0_60px_rgba(0,0,0,0.6)]
-
           overflow-hidden
-        "
+          ${
+            isRotated
+              ? "w-[100vh] h-[100vw] min-w-[100vh] min-h-[100vw] rotate-90 rounded-none"
+              : "w-full h-full sm:w-[94vw] sm:h-[92vh] sm:rounded-[45px]"
+          }
+        `}
       >
 
         {/* TABLE SHINE */}
@@ -194,7 +199,7 @@ function GameTable({ children }) {
         <div className="
           absolute
           inset-0
-          rounded-[50px]
+          rounded-[30px] sm:rounded-[50px]
 
           bg-gradient-to-b
           from-white/10

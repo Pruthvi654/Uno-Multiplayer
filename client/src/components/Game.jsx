@@ -35,8 +35,6 @@ function Game({
   const [reversePulse, setReversePulse] = useState(false);
 
   const [showSkipEffect, setShowSkipEffect] = useState(false);
-  const [displayStackCount, setDisplayStackCount] = useState(0);
-  const [finalStackPopup, setFinalStackPopup] = useState(0);
 
 
 
@@ -229,8 +227,21 @@ function Game({
     ];
   })();
 
-  // Seat positions
-  const positions = ["bottom", "left", "top", "right"];
+  // Dynamic seat position calculator
+  const getSeatPosition = (index, total) => {
+    if (total === 2) {
+      // 2 Players: Opponent is placed directly at Top (opposite player's hand)
+      return index === 1 ? "top" : "bottom";
+    }
+    if (total === 3) {
+      // 3 Players: Next player is Right, 2nd opponent is Left
+      const pos3 = ["bottom", "right", "left"];
+      return pos3[index] || "top";
+    }
+    // 4 Players: Next player is Right, 2nd opponent is Top, 3rd is Left
+    const pos4 = ["bottom", "right", "top", "left"];
+    return pos4[index] || "top";
+  };
 
 
   return (
@@ -255,7 +266,7 @@ function Game({
       {rotatedPlayers.map((player, index) => {
         const isMe = player.id === myId;
         if (isMe) return null;
-        const pos = positions[index] || "top";
+        const pos = getSeatPosition(index, rotatedPlayers.length);
         const isActive = player.id === currentTurn;
         return (
           <PlayerSeat
@@ -340,11 +351,7 @@ function Game({
             direction={direction}
             reversePulse={reversePulse}
             showSkipEffect={showSkipEffect}
-            stackCount={
-              pendingDraw > 0
-                ? pendingDraw
-                : finalStackPopup
-            }
+            stackCount={pendingDraw}
           />
           <div className="pointer-events-auto">
 
@@ -594,7 +601,7 @@ function Game({
                     `}
                       >
 
-                        <div className="scale-[1.15] origin-bottom">
+                        <div className="scale-[0.9] sm:scale-[1.05] lg:scale-[1.18] origin-bottom">
 
                           <UnoCard
                             color={unoColor}
@@ -614,35 +621,15 @@ function Game({
 
             )
           }
-          <div
-            className="
-    absolute
-    bottom-24
-    right-6
+          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 flex flex-col items-end gap-2 sm:gap-3 z-50">
+            <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`px-5 sm:px-9 py-2 sm:py-3.5 rounded-full text-xl sm:text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black scale-105" : "bg-gray-600/80 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
 
-    z-50
-  "
-          >
-            <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`mb-4 px-5 sm:px-10 py-2 sm:py-4 rounded-full text-xl sm:text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black" : "bg-gray-600 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
+            {isSpectator && (<div className="text-sm sm:text-xl font-bold text-yellow-300 bg-black/50 px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl shadow-xl">👀 Spectating</div>)}
 
-            {isSpectator && (<div className="mb-4 text-2xl font-bold text-yellow-300 bg-black/50 px-6 py-3 rounded-xl shadow-xl">👀 Spectating</div>)}
+            {!isSpectator && (
+              <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500/50 px-4 sm:px-7 py-2 sm:py-3 rounded-xl text-sm sm:text-lg font-bold shadow-xl transition">Skip Turn</button>
+            )}
           </div>
-          {!isSpectator && (
-            <div
-              className="
-            absolute
-            bottom-6
-            right-6
-
-            flex
-            gap-4
-
-            z-50
-          "
-            >
-              <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500 px-5 sm:px-8 py-2 sm:py-3 rounded-xl text-sm sm:text-lg font-bold shadow-xl transition">Skip Turn</button>
-            </div>
-          )}
         </div>
 
 

@@ -15,12 +15,12 @@ function CenterPile({
       <div className="
         absolute
 
-        left-[-50%]
+        left-[-40%] sm:left-[-48%]
         top-[8%]
 
         -translate-y-1/2
 
-        scale-[0.45] sm:scale-[0.55] md:scale-[0.65] lg:scale-[0.72]
+        scale-[0.52] sm:scale-[0.62] md:scale-[0.7] lg:scale-[0.78]
         z-30
         
       "
@@ -157,7 +157,7 @@ function CenterPile({
 
                     <div className="
                       relative
-                      scale-[1]
+                      scale-[0.82] sm:scale-[0.92] md:scale-[1]
 
                       transition-all
                       duration-300
