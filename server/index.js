@@ -1880,6 +1880,11 @@ io.on("connection", (socket) => {
         room.gameMessage =
           `${targetPlayer.username} called UNO!`;
 
+        io.to(roomId).emit("uno-called", {
+          playerId: targetPlayer.id,
+          username: targetPlayer.username
+        });
+
         resetUnoState(room);
 
       }
@@ -1929,6 +1934,12 @@ io.on("connection", (socket) => {
 
         room.gameMessage =
           `${targetPlayer.username} forgot UNO! +2 cards`;
+
+        io.to(roomId).emit("uno-caught", {
+          playerId: unoState.targetPlayerId,
+          caughtBy: socket.id,
+          username: targetPlayer.username
+        });
 
         resetUnoState(room);
 

@@ -5,6 +5,7 @@ import PlayerSeat from "./PlayerSeat";
 import UnoCard from "./cards/UnoCard";
 import CenterPile from "./CenterPile";
 import Effects from "./effects/Effects";
+import socket from "../socket";
 
 function Game({
   hand,
@@ -33,8 +34,50 @@ function Game({
   const [lastPileCard, setLastPileCard] = useState("");
   const [pileInitialized, setPileInitialized] = useState(false);
   const [reversePulse, setReversePulse] = useState(false);
-
   const [showSkipEffect, setShowSkipEffect] = useState(false);
+
+  const [unoPopups, setUnoPopups] = useState({});
+
+  // UNO CALL & PENALTY SOCKET LISTENERS (ONE-SHOT POPUP ON BUTTON PRESS)
+  useEffect(() => {
+    const handleUnoCalled = ({ playerId }) => {
+      setUnoPopups(prev => ({
+        ...prev,
+        [playerId]: { text: "🔥 UNO!", type: "call", id: Date.now() }
+      }));
+
+      setTimeout(() => {
+        setUnoPopups(prev => {
+          const copy = { ...prev };
+          delete copy[playerId];
+          return copy;
+        });
+      }, 1800);
+    };
+
+    const handleUnoCaught = ({ playerId }) => {
+      setUnoPopups(prev => ({
+        ...prev,
+        [playerId]: { text: "⚠️ +2 PENALTY", type: "penalty", id: Date.now() }
+      }));
+
+      setTimeout(() => {
+        setUnoPopups(prev => {
+          const copy = { ...prev };
+          delete copy[playerId];
+          return copy;
+        });
+      }, 2200);
+    };
+
+    socket.on("uno-called", handleUnoCalled);
+    socket.on("uno-caught", handleUnoCaught);
+
+    return () => {
+      socket.off("uno-called", handleUnoCalled);
+      socket.off("uno-caught", handleUnoCaught);
+    };
+  }, []);
 
 
 
@@ -251,27 +294,94 @@ function Game({
   return (
     <GameTable>
       {showColorPicker && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="relative w-64 h-96 rounded-3xl overflow-hidden border-8 border-white shadow-2xl cursor-pointer">
-            <div onClick={() => chooseWildColor("red")} className="absolute top-0 left-0 w-1/2 h-1/2 bg-red-500 hover:brightness-125 transition" />
-            <div onClick={() => chooseWildColor("blue")} className="absolute top-0 right-0 w-1/2 h-1/2 bg-blue-500 hover:brightness-125 transition" />
-            <div onClick={() => chooseWildColor("green")} className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-green-500 hover:brightness-125 transition" />
-            <div onClick={() => chooseWildColor("yellow")} className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-yellow-400 hover:brightness-125 transition" />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-20 h-20 rounded-full bg-black border-4 border-white flex items-center justify-center text-4xl font-black text-white">
-                {hand[selectedWildIndex]?.type === "wild4" ? "+4" : "W"}
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center z-50 select-none">
+          <motion.div
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.7, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="flex flex-col items-center gap-6"
+          >
+            <div className="text-center">
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-cyan-300">
+                SELECT COLOR
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-black text-white mt-1">
+                Choose Next Color
+              </h3>
+            </div>
+
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full overflow-hidden border-4 border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-xl p-1 bg-slate-900/90 grid grid-cols-2 grid-rows-2 gap-1">
+              {/* RED SECTOR */}
+              <button
+                onClick={() => chooseWildColor("red")}
+                className="w-full h-full bg-gradient-to-br from-red-500 to-rose-700 hover:scale-105 transition-all duration-200 flex items-center justify-center rounded-tl-full shadow-inner border border-red-400/30 group cursor-pointer"
+              >
+                <span className="text-xs font-black uppercase tracking-widest text-white/90 group-hover:scale-110 transition">
+                  RED
+                </span>
+              </button>
+
+              {/* BLUE SECTOR */}
+              <button
+                onClick={() => chooseWildColor("blue")}
+                className="w-full h-full bg-gradient-to-bl from-blue-500 to-indigo-700 hover:scale-105 transition-all duration-200 flex items-center justify-center rounded-tr-full shadow-inner border border-blue-400/30 group cursor-pointer"
+              >
+                <span className="text-xs font-black uppercase tracking-widest text-white/90 group-hover:scale-110 transition">
+                  BLUE
+                </span>
+              </button>
+
+              {/* GREEN SECTOR */}
+              <button
+                onClick={() => chooseWildColor("green")}
+                className="w-full h-full bg-gradient-to-tr from-emerald-500 to-green-700 hover:scale-105 transition-all duration-200 flex items-center justify-center rounded-bl-full shadow-inner border border-green-400/30 group cursor-pointer"
+              >
+                <span className="text-xs font-black uppercase tracking-widest text-white/90 group-hover:scale-110 transition">
+                  GREEN
+                </span>
+              </button>
+
+              {/* YELLOW SECTOR */}
+              <button
+                onClick={() => chooseWildColor("yellow")}
+                className="w-full h-full bg-gradient-to-tl from-amber-400 to-yellow-600 hover:scale-105 transition-all duration-200 flex items-center justify-center rounded-br-full shadow-inner border border-yellow-300/30 group cursor-pointer"
+              >
+                <span className="text-xs font-black uppercase tracking-widest text-slate-950 group-hover:scale-110 transition">
+                  YELLOW
+                </span>
+              </button>
+
+              {/* CENTER BADGE */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-20 h-20 rounded-full bg-slate-950 border-4 border-white/30 flex items-center justify-center text-2xl font-black text-white shadow-2xl">
+                  {hand[selectedWildIndex]?.type === "wild4" ? "+4" : "W"}
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
 
-      {/* OPPONENT PLAYERS */}
+      {/* PLAYERS SEATS */}
       {rotatedPlayers.map((player, index) => {
         const isMe = player.id === myId;
-        if (isMe) return null;
         const pos = getSeatPosition(index, rotatedPlayers.length);
         const isActive = player.id === currentTurn;
+        if (isMe && pos === "bottom") {
+          return (
+            <PlayerSeat
+              key={player.id}
+              position="bottom"
+              username={player.username}
+              cardCount={hand.length}
+              active={isActive}
+              isSpectator={isSpectator}
+              unoPopup={unoPopups[player.id]}
+            />
+          );
+        }
+        if (isMe) return null;
         return (
           <PlayerSeat
             key={player.id}
@@ -280,9 +390,18 @@ function Game({
             cardCount={player.handSize}
             active={isActive}
             isSpectator={player.isSpectator}
+            unoPopup={unoPopups[player.id]}
           />
         );
       })}
+
+      {/* TURN STATUS HUD PILL */}
+      <div className="absolute top-3 left-3 sm:top-5 sm:left-6 z-40 flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 shadow-xl select-none">
+        <span className={`w-2.5 h-2.5 rounded-full ${isMyTurn ? "bg-amber-400 animate-ping" : "bg-cyan-400"}`} />
+        <span className="text-xs font-black uppercase tracking-widest text-white">
+          {isMyTurn ? "🎯 YOUR TURN" : `⌛ ${players.find(p => p.id === currentTurn)?.username || "Opponent"}'s Turn`}
+        </span>
+      </div>
 
       {/* CENTER TABLE */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -633,13 +752,34 @@ function Game({
 
             )
           }
-          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 flex flex-col items-end gap-2 sm:gap-3 z-50">
-            <button onClick={callUno} disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)} className={`px-5 sm:px-9 py-2 sm:py-3.5 rounded-full text-xl sm:text-3xl font-black shadow-2xl transition ${((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch)) ? "bg-yellow-400 hover:bg-yellow-500 text-black scale-105" : "bg-gray-600/80 text-gray-400 cursor-not-allowed"}`}>UNO!</button>
+          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 flex flex-col items-end gap-2.5 sm:gap-3 z-50 select-none">
+            {/* UNO BUTTON */}
+            <button
+              onClick={callUno}
+              disabled={!unoState?.targetPlayerId || (unoState?.targetPlayerId === myId ? false : !unoState?.canCatch)}
+              className={`px-6 sm:px-10 py-3 sm:py-4 rounded-full text-2xl sm:text-3xl font-black tracking-wider uppercase transition-all duration-300 transform ${
+                ((unoState?.targetPlayerId === myId && unoState?.canCallUno) || (unoState?.targetPlayerId !== myId && unoState?.canCatch))
+                  ? "bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:scale-110 text-slate-950 shadow-[0_0_35px_rgba(251,191,36,0.8)] border-2 border-yellow-200 animate-pulse cursor-pointer"
+                  : "bg-slate-900/80 text-slate-500 border border-slate-700/50 backdrop-blur-md cursor-not-allowed"
+              }`}
+            >
+              UNO!
+            </button>
 
-            {isSpectator && (<div className="text-sm sm:text-xl font-bold text-yellow-300 bg-black/50 px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl shadow-xl">👀 Spectating</div>)}
+            {isSpectator && (
+              <div className="text-xs sm:text-sm font-black uppercase tracking-widest text-amber-300 bg-slate-950/80 border border-amber-400/30 px-4 py-2 rounded-xl shadow-xl backdrop-blur-md">
+                👀 Spectating Match
+              </div>
+            )}
 
             {!isSpectator && (
-              <button onClick={skipTurn} disabled={!isMyTurn || !hasDrawnCard} className="bg-red-500 hover:bg-red-600 disabled:bg-gray-500/50 px-4 sm:px-7 py-2 sm:py-3 rounded-xl text-sm sm:text-lg font-bold shadow-xl transition">Skip Turn</button>
+              <button
+                onClick={skipTurn}
+                disabled={!isMyTurn || !hasDrawnCard}
+                className="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 disabled:border-slate-700 disabled:cursor-not-allowed border border-rose-400/30 px-5 sm:px-8 py-2.5 sm:py-3.5 rounded-2xl text-sm sm:text-base font-black text-white tracking-wider shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                SKIP TURN
+              </button>
             )}
           </div>
         </div>
