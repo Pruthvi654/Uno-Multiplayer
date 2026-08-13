@@ -29,6 +29,16 @@ function App() {
   const [rematchRequested, setRematchRequested] = useState(false);
 
   useEffect(() => {
+    // READ URL SEARCH PARAMS FOR INVITE LINK (?join=ABC123 or ?room=ABC123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const inviteCode = urlParams.get("join") || urlParams.get("room");
+
+    if (inviteCode) {
+      setJoinRoomCode(inviteCode.trim());
+    }
+  }, []);
+
+  useEffect(() => {
 
     socket.on("room-created", ({ roomId, players }) => {
 
@@ -295,6 +305,7 @@ function App() {
         players={players}
         currentTurn={currentTurn}
         myId={socket.id}
+        roomId={roomId}
         gameMessage={gameMessage}
         direction={direction}
         pendingDraw={pendingDraw}

@@ -67,35 +67,36 @@ function PlayerSeat({ position, username, cardCount, active, isSpectator, unoPop
                 TURN
               </span>
             )}
+            {isSpectator && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1">
+                👀 Spectator
+              </span>
+            )}
           </div>
           <p className="text-slate-300/80 text-xs font-bold flex items-center gap-1">
-            <span>🂠</span> {cardCount !== null && `${cardCount} cards`}
+            <span>🂠</span> {cardCount !== null && cardCount > 0 ? `${cardCount} cards` : isSpectator ? "Spectating" : "0 cards"}
           </p>
         </div>
       </div>
 
-      {/* MINI HAND VISUALIZER */}
-      <div className="relative w-[85px] h-[110px]">
-        {Array.from({ length: Math.min(cardCount || 0, 6) }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: `${i * 6}px`,
-              top: `${i * 2}px`,
-              transform: `rotate(${i * 2}deg)`
-            }}
-          >
-            <div className="scale-[0.42] origin-top-left drop-shadow-md">
-              <UnoCard color="back" value="back" tableCard={true} />
+      {/* MINI HAND VISUALIZER (ONLY IF CARDS REMAIN) */}
+      {cardCount > 0 && (
+        <div className="relative w-[85px] h-[110px]">
+          {Array.from({ length: Math.min(cardCount || 0, 6) }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                position: "absolute",
+                left: `${i * 6}px`,
+                top: `${i * 2}px`,
+                transform: `rotate(${i * 2}deg)`
+              }}
+            >
+              <div className="scale-[0.42] origin-top-left drop-shadow-md">
+                <UnoCard color="back" value="back" tableCard={true} />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {isSpectator && (
-        <div className="rounded-full bg-amber-400/10 border border-amber-400/30 px-3 py-1 text-xs font-black uppercase tracking-wider text-amber-300 shadow-md">
-          Spectator
+          ))}
         </div>
       )}
     </div>

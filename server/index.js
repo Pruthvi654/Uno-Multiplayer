@@ -35,6 +35,14 @@ const io = new Server(server, {
 
 const rooms = {};
 
+function getRoom(roomId) {
+  if (!roomId) return null;
+  if (rooms[roomId]) return rooms[roomId];
+  const target = String(roomId).trim().toLowerCase();
+  const foundKey = Object.keys(rooms).find(k => k.toLowerCase() === target);
+  return foundKey ? rooms[foundKey] : null;
+}
+
 function generateDeck() {
 
   const colors = [
@@ -658,8 +666,9 @@ io.on("connection", (socket) => {
   // ======================================================
 
   socket.on("join-room", ({ roomId, username }) => {
+    const room = getRoom(roomId);
 
-    if (!rooms[roomId]) {
+    if (!room) {
 
       socket.emit(
         "error-message",
@@ -670,10 +679,12 @@ io.on("connection", (socket) => {
 
     }
 
+    const actualRoomId = Object.keys(rooms).find(k => rooms[k] === room) || roomId;
+
     // PLAYER ALREADY IN ROOM
     const alreadyJoined =
 
-      rooms[roomId].players.some(
+      room.players.some(
         player => player.id === socket.id
       );
 
@@ -688,7 +699,7 @@ io.on("connection", (socket) => {
 
     }
 
-    if (rooms[roomId].players.length >= 4) {
+    if (room.players.length >= 4) {
 
       socket.emit(
         "error-message",
@@ -699,7 +710,7 @@ io.on("connection", (socket) => {
 
     }
 
-    rooms[roomId].players.push({
+    room.players.push({
 
       id: socket.id,
 
@@ -709,14 +720,14 @@ io.on("connection", (socket) => {
 
     });
 
-    socket.join(roomId);
+    socket.join(actualRoomId);
 
-    io.to(roomId).emit(
+    io.to(actualRoomId).emit(
       "update-players",
-      rooms[roomId].players
+      room.players
     );
 
-    console.log(username, "joined", roomId);
+    console.log(username, "joined", actualRoomId);
 
   });
 

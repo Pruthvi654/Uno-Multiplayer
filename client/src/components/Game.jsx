@@ -6,6 +6,7 @@ import UnoCard from "./cards/UnoCard";
 import CenterPile from "./CenterPile";
 import Effects from "./effects/Effects";
 import socket from "../socket";
+import sounds from "../utils/soundEffects";
 
 function Game({
   hand,
@@ -18,6 +19,7 @@ function Game({
   players,
   currentTurn,
   myId,
+  roomId,
   gameMessage,
   direction,
   pendingDraw,
@@ -37,10 +39,13 @@ function Game({
   const [showSkipEffect, setShowSkipEffect] = useState(false);
 
   const [unoPopups, setUnoPopups] = useState({});
+  const [copyStatus, setCopyStatus] = useState("");
+  const [isMuted, setIsMuted] = useState(sounds.isMuted());
 
   // UNO CALL & PENALTY SOCKET LISTENERS (ONE-SHOT POPUP ON BUTTON PRESS)
   useEffect(() => {
     const handleUnoCalled = ({ playerId }) => {
+      sounds.unoCall();
       setUnoPopups(prev => ({
         ...prev,
         [playerId]: { text: "🔥 UNO!", type: "call", id: Date.now() }
@@ -56,6 +61,7 @@ function Game({
     };
 
     const handleUnoCaught = ({ playerId }) => {
+      sounds.unoPenalty();
       setUnoPopups(prev => ({
         ...prev,
         [playerId]: { text: "⚠️ +2 PENALTY", type: "penalty", id: Date.now() }
@@ -403,6 +409,21 @@ function Game({
         </span>
       </div>
 
+      {/* TOP-RIGHT CONTROLS */}
+      <div className="absolute top-3 right-3 sm:top-5 sm:right-6 z-40 flex items-center gap-2 select-none">
+        {/* SOUND TOGGLE */}
+        <button
+          onClick={() => {
+            const nextMuted = sounds.toggleMute();
+            setIsMuted(nextMuted);
+          }}
+          className="px-3 py-2 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 text-xs font-black text-white shadow-xl transition hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-1.5"
+          title={isMuted ? "Unmute Sound Effects" : "Mute Sound Effects"}
+        >
+          <span>{isMuted ? "🔇" : "🔊"}</span>
+        </button>
+      </div>
+
       {/* CENTER TABLE */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {/* VICTORY BANNER OVERLAY */}
@@ -497,6 +518,8 @@ function Game({
                   !isSpectator &&
                   !hasDrawnCard
                 ) {
+
+                  sounds.drawCard();
 
                   setDrawingCard(true);
 
@@ -649,6 +672,8 @@ function Game({
                         return;
 
                       }
+
+                      sounds.playCard();
 
                       const randomRotation =
                         Math.random() * 40 - 20;

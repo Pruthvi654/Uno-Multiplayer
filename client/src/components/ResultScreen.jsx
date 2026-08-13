@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import ConfettiCanvas from "./effects/ConfettiCanvas";
+import sounds from "../utils/soundEffects";
 
 function ResultScreen({
   rankings,
@@ -8,6 +10,9 @@ function ResultScreen({
   requestRematch,
   rematchRequested
 }) {
+  useEffect(() => {
+    sounds.victoryFanfare();
+  }, []);
   // Map rankings to player data
   const fullRankings = rankings.map((r) => {
     const pData = players.find((p) => p.id === r.id);

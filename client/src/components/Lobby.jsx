@@ -19,16 +19,30 @@ function Lobby({
 }) {
   const [copyStatus, setCopyStatus] = useState("");
 
+  const copyInviteLink = async () => {
+    if (!roomId) return;
+    const link = `${window.location.origin}${window.location.pathname}?join=${roomId}`;
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopyStatus("Invite Link Copied! 🔗");
+      setTimeout(() => setCopyStatus(""), 2000);
+    } catch (error) {
+      setCopyStatus("Copy failed");
+      setTimeout(() => setCopyStatus(""), 2000);
+    }
+  };
+
   const copyRoomCode = async () => {
     if (!roomId) return;
 
     try {
       await navigator.clipboard.writeText(roomId);
-      setCopyStatus("Copied!");
-      setTimeout(() => setCopyStatus(""), 1500);
+      setCopyStatus("Room Code Copied! 📋");
+      setTimeout(() => setCopyStatus(""), 2000);
     } catch (error) {
       setCopyStatus("Copy failed");
-      setTimeout(() => setCopyStatus(""), 1500);
+      setTimeout(() => setCopyStatus(""), 2000);
     }
   };
 
@@ -170,31 +184,43 @@ function Lobby({
 
               {/* ROOM CODE DISPLAY */}
               <div className="rounded-[28px] border border-white/10 bg-slate-950/80 p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-slate-400">
-                      Room Code
-                    </p>
-                    <div className="mt-1 flex items-center gap-3">
-                      <p className="text-2xl font-black text-amber-300 tracking-wider">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-slate-400">
+                        Room Code
+                      </p>
+                      <p className="text-2xl font-black text-amber-300 tracking-wider mt-0.5">
                         {roomId || "------"}
                       </p>
-                      {roomId && (
-                        <button
-                          onClick={copyRoomCode}
-                          className="rounded-xl bg-white/10 px-3 py-1.5 text-xs font-bold text-slate-200 transition hover:bg-white/20 active:scale-95"
-                        >
-                          📋 Copy
-                        </button>
-                      )}
                     </div>
-                    {copyStatus && (
-                      <p className="mt-1 text-xs font-bold text-emerald-400">{copyStatus}</p>
-                    )}
+                    <div className="rounded-2xl bg-amber-500/10 border border-amber-400/20 px-4 py-2 text-xs font-black uppercase tracking-wider text-amber-300">
+                      {isHost ? "👑 Host" : "🎮 Player"}
+                    </div>
                   </div>
-                  <div className="rounded-2xl bg-amber-500/10 border border-amber-400/20 px-4 py-2 text-xs font-black uppercase tracking-wider text-amber-300">
-                    {isHost ? "👑 Host" : "🎮 Player"}
-                  </div>
+
+                  {roomId && (
+                    <div className="flex items-center gap-2 pt-1 border-t border-white/10">
+                      <button
+                        onClick={copyInviteLink}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-3 py-2 text-xs font-black text-white shadow-md transition hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <span>🔗</span>
+                        <span>Copy Invite Link</span>
+                      </button>
+
+                      <button
+                        onClick={copyRoomCode}
+                        className="rounded-xl bg-slate-800 border border-white/10 px-3 py-2 text-xs font-bold text-slate-200 transition hover:bg-slate-700 active:scale-95 cursor-pointer"
+                      >
+                        📋 Copy Code
+                      </button>
+                    </div>
+                  )}
+
+                  {copyStatus && (
+                    <p className="text-xs font-bold text-emerald-400 animate-pulse">{copyStatus}</p>
+                  )}
                 </div>
               </div>
 
