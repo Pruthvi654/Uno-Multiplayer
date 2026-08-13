@@ -79,19 +79,25 @@ const colorGlows = {
 
 function UnoCard({ color, value, tableCard = false, pileCard = false, chosenColor = null }) {
   const rawImageSrc = cardImages[color]?.[value];
-  const [displaySrc, setDisplaySrc] = useState(rawImageSrc);
-
   const isWildCard = color === "wild" || value === "wild" || value === "wild4";
+  const cacheKey = isWildCard && chosenColor && rawImageSrc ? `${rawImageSrc}_${chosenColor}` : null;
+  const cachedUrl = cacheKey ? cardColorCache.get(cacheKey) : null;
+
+  const [displaySrc, setDisplaySrc] = useState(cachedUrl || rawImageSrc);
 
   useEffect(() => {
     if (isWildCard && chosenColor && rawImageSrc) {
-      getRecoloredWildCardDataUrl(rawImageSrc, chosenColor, (newUrl) => {
-        setDisplaySrc(newUrl);
-      });
+      if (cachedUrl) {
+        setDisplaySrc(cachedUrl);
+      } else {
+        getRecoloredWildCardDataUrl(rawImageSrc, chosenColor, (newUrl) => {
+          setDisplaySrc(newUrl);
+        });
+      }
     } else {
       setDisplaySrc(rawImageSrc);
     }
-  }, [isWildCard, chosenColor, rawImageSrc]);
+  }, [isWildCard, chosenColor, rawImageSrc, cachedUrl]);
 
   const activeGlow = isWildCard && chosenColor ? colorGlows[chosenColor] : null;
 

@@ -43,18 +43,20 @@ function GameTable({ children }) {
       "
 
       onMouseMove={(e) => {
+        const container = e.currentTarget;
+        const x = (e.clientX / window.innerWidth - 0.5) * 40;
+        const y = (e.clientY / window.innerHeight - 0.5) * 40;
 
-        const x =
-          (e.clientX / window.innerWidth - 0.5) * 40;
-
-        const y =
-          (e.clientY / window.innerHeight - 0.5) * 40;
-
-        setMousePosition({
-          x,
-          y
+        requestAnimationFrame(() => {
+          container.style.setProperty("--mx", `${x * 0.4}px`);
+          container.style.setProperty("--my", `${y * 0.4}px`);
+          container.style.setProperty("--bx", `${x * 0.6}px`);
+          container.style.setProperty("--by", `${y * 0.6}px`);
+          container.style.setProperty("--px", `${-x * 0.5}px`);
+          container.style.setProperty("--py", `${-y * 0.5}px`);
+          container.style.setProperty("--cx", `calc(-50% + ${x * 0.8}px)`);
+          container.style.setProperty("--cy", `calc(-50% + ${y * 0.8}px)`);
         });
-
       }}
     >
 
@@ -69,16 +71,12 @@ function GameTable({ children }) {
           bg-purple-500/20
           blur-[150px]
           transition-transform
-          duration-150
+          duration-75
+          will-change-transform
         "
 
         style={{
-          transform: `
-            translate(
-              ${mousePosition.x * 0.4}px,
-              ${mousePosition.y * 0.4}px
-            )
-          `
+          transform: "translate(var(--mx, 0px), var(--my, 0px))"
         }}
       />
 
@@ -95,16 +93,12 @@ function GameTable({ children }) {
           bg-blue-500/20
           blur-[120px]
           transition-transform
-          duration-150
+          duration-75
+          will-change-transform
         "
 
         style={{
-          transform: `
-            translate(
-              ${mousePosition.x * 0.6}px,
-              ${mousePosition.y * 0.6}px
-            )
-          `
+          transform: "translate(var(--bx, 0px), var(--by, 0px))"
         }}
       />
 
@@ -121,16 +115,12 @@ function GameTable({ children }) {
           bg-pink-500/20
           blur-[120px]
           transition-transform
-          duration-150
+          duration-75
+          will-change-transform
         "
 
         style={{
-          transform: `
-            translate(
-              ${-mousePosition.x * 0.5}px,
-              ${-mousePosition.y * 0.5}px
-            )
-          `
+          transform: "translate(var(--px, 0px), var(--py, 0px))"
         }}
       />
 
@@ -148,17 +138,12 @@ function GameTable({ children }) {
           bg-red-500/20
           blur-[120px]
           transition-transform
-          duration-150
+          duration-75
+          will-change-transform
         "
 
         style={{
-          transform: `
-            translateX(-50%)
-            translate(
-              ${mousePosition.x * 0.3}px,
-              ${mousePosition.y * 0.3}px
-            )
-          `
+          transform: "translateX(-50%) translate(var(--mx, 0px), var(--my, 0px))"
         }}
       />
 
@@ -228,16 +213,12 @@ function GameTable({ children }) {
             blur-[100px]
 
             transition-transform
-            duration-150
+            duration-75
+            will-change-transform
           "
 
           style={{
-            transform: `
-              translate(
-                calc(-50% + ${mousePosition.x * 0.8}px),
-                calc(-50% + ${mousePosition.y * 0.8}px)
-              )
-            `
+            transform: "translate(var(--cx, -50%), var(--cy, -50%))"
           }}
         />
 

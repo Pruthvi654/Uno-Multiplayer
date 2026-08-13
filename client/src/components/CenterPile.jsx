@@ -1,4 +1,5 @@
 import UnoCard from "./cards/UnoCard";
+import { motion } from "framer-motion";
 
 function CenterPile({
   showPile,
@@ -138,9 +139,15 @@ function CenterPile({
               {
                 pile.map((card, index) => (
 
-                  <div
+                  <motion.div
 
                     key={index}
+
+                    initial={{ scale: 1.15, opacity: 0.85 }}
+
+                    animate={{ scale: 1, opacity: 1 }}
+
+                    transition={{ duration: 0.2, ease: "easeOut" }}
 
                     className="
                       absolute
@@ -158,9 +165,6 @@ function CenterPile({
                     <div className="
                       relative
                       scale-[0.82] sm:scale-[0.92] md:scale-[1]
-
-                      transition-all
-                      duration-300
                     ">
 
                       <UnoCard
@@ -173,7 +177,7 @@ function CenterPile({
 
                     </div>
 
-                  </div>
+                  </motion.div>
 
                 ))
               }

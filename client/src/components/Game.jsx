@@ -506,7 +506,7 @@ function Game({
 
                     setDrawingCard(false);
 
-                  }, 500);
+                  }, 340);
 
                 }
 
@@ -669,7 +669,7 @@ function Game({
 
                         setFlyingCard(null);
 
-                      }, 520);
+                      }, 340);
 
                     };
 
@@ -811,8 +811,8 @@ function Game({
               }}
 
               transition={{
-                duration: 0.55,
-                ease: "easeInOut"
+                duration: 0.34,
+                ease: [0.22, 1, 0.36, 1]
               }}
 
               className="
@@ -875,8 +875,8 @@ function Game({
               }}
 
               transition={{
-                duration: 0.55,
-                ease: "easeInOut"
+                duration: 0.34,
+                ease: [0.22, 1, 0.36, 1]
               }}
 
               className="
