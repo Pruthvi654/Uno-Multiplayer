@@ -3,6 +3,7 @@ import socket from "./socket";
 
 import Lobby from "./components/Lobby";
 import Game from "./components/Game";
+import ResultScreen from "./components/ResultScreen";
 
 function App() {
 
@@ -270,182 +271,15 @@ function App() {
   if (gameStarted) {
 
     if (rankings.length > 0) {
-
       return (
-
-        <div className="
-          bg-black
-          min-h-screen
-          text-white
-          flex
-          flex-col
-          items-center
-          justify-center
-          px-6
-        ">
-
-          <h1 className="
-            text-6xl
-            font-black
-            mb-10
-            text-yellow-400
-          ">
-
-            Final Rankings
-
-          </h1>
-
-          <div className="
-            w-full
-            max-w-2xl
-            bg-white/10
-            rounded-3xl
-            overflow-hidden
-            shadow-2xl
-            border
-            border-white/20
-          ">
-
-            {
-              rankings.map((player, index) => {
-
-                const playerData = players.find(
-                  p => p.id === player.id
-                );
-
-                return (
-
-                  <div
-                    key={player.id}
-                    className="
-                      flex
-                      justify-between
-                      items-center
-                      px-8
-                      py-6
-                      border-b
-                      border-white/10
-                      text-2xl
-                      font-bold
-                    "
-                  >
-
-                    <div>
-
-                      {
-                        index === 0
-                          ? "🥇"
-
-                          : index === 1
-                            ? "🥈"
-
-                            : index === 2
-                              ? "🥉"
-
-                              : "💀"
-                      }
-
-                    </div>
-
-                    <div>
-
-                      {
-                        playerData?.username ||
-                        "Unknown Player"
-                      }
-
-                    </div>
-
-                    <div>
-
-                      {
-                        player.isLoser
-                          ? "LOSER"
-                          : `#${player.position}`
-                      }
-
-                    </div>
-
-                  </div>
-
-                );
-
-              })
-            }
-
-          </div>
-
-          <div className="
-            flex
-            gap-6
-            mt-10
-          ">
-
-            <button
-
-              onClick={requestRematch}
-
-              disabled={rematchRequested}
-
-              className={`
-                px-8
-                py-4
-                rounded-2xl
-                text-2xl
-                font-bold
-                shadow-xl
-                transition
-
-                ${rematchRequested
-
-                  ? "bg-green-700 text-white cursor-not-allowed"
-
-                  : "bg-green-500 hover:bg-green-600"
-                }
-              `}
-            >
-
-              {
-                rematchRequested
-
-                  ? "Waiting..."
-
-                  : "Rematch"
-              }
-
-            </button>
-
-            <button
-
-              onClick={() => {
-
-                window.location.reload();
-
-              }}
-
-              className="
-                bg-red-500
-                hover:bg-red-600
-                px-8
-                py-4
-                rounded-2xl
-                text-2xl
-                font-bold
-                shadow-xl
-                transition
-              "
-            >
-
-              Leave
-
-            </button>
-
-          </div>
-
-        </div>
-
+        <ResultScreen
+          rankings={rankings}
+          players={players}
+          myId={socket.id}
+          requestRematch={requestRematch}
+          rematchRequested={rematchRequested}
+        />
       );
-
     }
 
     return (

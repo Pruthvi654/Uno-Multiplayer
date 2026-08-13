@@ -1118,26 +1118,82 @@ io.on("connection", (socket) => {
 
         resetUnoState(room);
 
+        const winningPlayer =
+          room.players.find(
+            player => player.id === socket.id
+          );
+
+        room.gameMessage =
+          `🏆 ${winningPlayer ? winningPlayer.username : "Player"} played their last card and WON!`;
+
+        // SEND FINAL GAME UPDATE TO ALL PLAYERS FIRST
+        room.players.forEach(player => {
+
+          io.to(player.id).emit("game-update", {
+
+            hand: room.playerHands[player.id],
+
+            topCard: room.topCard,
+
+            currentTurn: room.currentTurn,
+
+            hasDrawnCard: room.hasDrawnCard,
+
+            players: getPlayersWithHandSizes(room),
+
+            gameMessage: room.gameMessage,
+
+            direction: room.direction,
+
+            pendingDraw: room.pendingDraw,
+
+            lastStackAmount: room.lastStackAmount || 0,
+
+            unoState: getSafeUnoState(room)
+
+          });
+
+        });
+
+        room.isGameOver = true;
+
         // =====================================
         // NORMAL MODE
         // =====================================
 
         if (room.gameMode === "normal") {
 
-          io.to(roomId).emit("game-over", {
+          const rankings = [
 
-            rankings: [
+            {
+              id: socket.id,
+              position: 1
+            },
 
-              {
-                id: socket.id,
-                position: 1
-              }
+            ...room.players
+              .filter(p => p.id !== socket.id)
+              .map((p, idx) => ({
+                id: p.id,
+                position: idx + 2
+              }))
 
-            ]
+          ];
 
-          });
+          setTimeout(() => {
 
-          console.log("Game Over");
+            if (rooms[roomId]) {
+
+              io.to(roomId).emit("game-over", {
+
+                rankings
+
+              });
+
+              console.log("Normal Game Over Emitted");
+
+            }
+
+          }, 3500);
 
           return;
 
@@ -1147,20 +1203,12 @@ io.on("connection", (socket) => {
         // ELIMINATION MODE
         // =====================================
 
-        const winningPlayer =
-
-          room.players.find(
-            player => player.id === socket.id
-          );
-
-        // SPECTATOR MODE
-        winningPlayer.isSpectator = true;
+        if (winningPlayer) {
+          winningPlayer.isSpectator = true;
+        }
 
         // SAVE WINNER
         room.winners.push(socket.id);
-
-        room.gameMessage =
-          `${winningPlayer.username} finished!`;
 
         // ACTIVE PLAYERS LEFT
         const activePlayers =
@@ -1192,13 +1240,21 @@ io.on("connection", (socket) => {
 
           ];
 
-          io.to(roomId).emit("game-over", {
+          setTimeout(() => {
 
-            rankings
+            if (rooms[roomId]) {
 
-          });
+              io.to(roomId).emit("game-over", {
 
-          console.log("Elimination Game Over");
+                rankings
+
+              });
+
+              console.log("Elimination Game Over Emitted");
+
+            }
+
+          }, 3500);
 
           return;
 
@@ -2325,9 +2381,5 @@ io.on("connection", (socket) => {
 // ======================================================
 
 server.listen(5000, () => {
-
-  console.log(
-    "Server running on port 5000"
-  );
-
+  console.log("Server running on port 5000");
 });

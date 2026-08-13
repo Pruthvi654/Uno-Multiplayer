@@ -282,14 +282,22 @@ function Game({
 
       {/* CENTER TABLE */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        {/* TURN STATUS */}
-        {/* <div className="text-xl font-bold bg-black/40 px-5 py-2 rounded-full mb-5">
-          {players.find(player => player.id === currentTurn)?.id === myId ? "Your Turn" : `${players.find(player => player.id === currentTurn)?.username}'s Turn`}
-        </div> */}
-
-        {/* {visibleMessage && (
-          <div className="mb-4 bg-black/60 px-6 py-3 rounded-xl text-xl font-bold text-yellow-300 shadow-xl animate-pulse">{visibleMessage}</div>
-        )} */}
+        {/* VICTORY BANNER OVERLAY */}
+        <AnimatePresence>
+          {gameMessage && (gameMessage.includes("WON!") || gameMessage.includes("finished!") || gameMessage.includes("🏆")) && (
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0, y: -20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 250, damping: 15 }}
+              className="absolute top-12 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col items-center"
+            >
+              <div className="px-8 py-4 rounded-3xl bg-gradient-to-r from-amber-500/95 via-yellow-300/95 to-amber-500/95 backdrop-blur-xl border-4 border-yellow-100 text-slate-950 font-black text-2xl sm:text-3xl shadow-[0_0_50px_rgba(251,191,36,0.9)] tracking-wide text-center uppercase">
+                {gameMessage}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {
           pendingDraw > 0 && (
