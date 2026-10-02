@@ -87,7 +87,7 @@ Uno-Multiplayer/
 ├── .gitignore
 ├── CONTRIBUTING.md
 ├── LICENSE
-└── README.md
+└── README.md```
 
 ## 🎯 Game Flow
 
@@ -122,7 +122,7 @@ Player Has 0 Cards
 Winner
   │
   ▼
-Rematch / New Game
+Rematch / New Game```
 
 ## 🃏 Game Mechanics
 
