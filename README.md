@@ -73,7 +73,9 @@ The server maintains the authoritative game state while connected clients receiv
 │  Authoritative Game State     │
 └──────────────────────────────┘
 
-📁 Project Structure
+## 📁 Project Structure
+
+```text
 Uno-Multiplayer/
 ├── client/
 ├── server/
@@ -85,7 +87,9 @@ Uno-Multiplayer/
 ├── LICENSE
 └── README.md
 
-🎯 Game Flow
+## 🎯 Game Flow
+
+```text
 Start
   │
   ▼
@@ -118,87 +122,145 @@ Winner
   ▼
 Rematch / New Game
 
-🃏 Game Mechanics
-The server handles core UNO rules, including:
-Valid-card checks
-Turn ownership
-Reverse and Skip effects
-Draw penalties
-Draw stacking
-Wild-card color selection
-UNO state
-Win conditions
-Room state
-This keeps the rules centralized instead of trusting browser clients to determine the outcome of a move.
+## 🃏 Game Mechanics
 
-⚡ Real-Time State
-A room can contain state such as:
+The server handles the core UNO game rules, including:
+
+- ✅ Valid-card checks
+- ✅ Turn ownership
+- ✅ Skip and Reverse effects
+- ✅ Draw penalties
+- ✅ Draw stacking
+- ✅ Wild-card color selection
+- ✅ UNO state management
+- ✅ Win conditions
+- ✅ Room state management
+
+Game-rule validation is handled on the server so that clients do not independently determine the outcome of a move.
+
+## ⚡ Real-Time Multiplayer
+
+The game uses **Socket.IO** to synchronize gameplay between connected players in real time.
+
+A game room can contain state such as:
+
+```text
 Room
 ├── Host
 ├── Players
 ├── Deck
-├── Discard pile
-├── Player hands
-├── Current turn
-├── Turn direction
-├── Pending draw
-├── Top card
-├── UNO state
-├── Winner state
-└── Rematch state
-Socket.IO is responsible for delivering state changes to connected players in real time.
+├── Discard Pile
+├── Player Hands
+├── Current Turn
+├── Turn Direction
+├── Pending Draw
+├── Top Card
+├── UNO State
+├── Winner State
+└── Rematch State
+```
 
-🌐 Live Demo
-Play now:
-pruno.duckdns.org
-or
-https://uno-multiplayer-gamma.vercel.app/⁠
+When a player performs an action, the server validates the action, updates the game state, and broadcasts the resulting state to the players in the room.
 
-💻 Local Development
-Requirements
-Node.js 18+
-npm
-Clone
+## 🌐 Live Demo
+
+### 🎮 Play UNO Multiplayer
+
+**Primary Demo:**  
+[https://pruno.duckdns.org](https://pruno.duckdns.org)
+
+**Vercel Deployment:**  
+[https://uno-multiplayer-gamma.vercel.app/](https://uno-multiplayer-gamma.vercel.app/)
+
+> The `pruno.duckdns.org` deployment is the primary game URL, while the Vercel deployment is available as an alternative.
+
+## 💻 Local Development
+
+### Requirements
+
+Make sure you have the following installed:
+
+- **Node.js 18 or later**
+- **npm**
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/Pruthvi654/Uno-Multiplayer.git
 cd Uno-Multiplayer
-Start the Server
+```
+
+### 2. Start the Server
+
+Open a terminal and run:
+
+```bash
 cd server
 npm install
 npm start
-Start the Client
+```
+
+The Node.js server will start using the configured server port.
+
+### 3. Start the Client
+
 Open another terminal:
+
+```bash
 cd client
 npm install
 npm start
-The React application will start in development mode.
+```
 
-🔐 Environment Variables
-Use .env.example as a reference for local configuration.
-Do not commit real secrets or private credentials.
+The React development server will start locally.
 
-🧪 CI
-GitHub Actions is configured to:
-Install client dependencies
-Build the React client
-Install server dependencies
-This provides a basic automated health check for changes pushed to main or submitted through pull requests.
+## 🔐 Environment Variables
 
-🔮 Future Improvements
-[ ] Reconnect support
-[ ] Persistent player profiles
-[ ] Match history
-[ ] Public matchmaking
-[ ] Private invite links
-[ ] Spectator mode
-[ ] Production logging and monitoring
-[ ] Expanded automated test coverage
-[ ] Accessibility improvements
-[ ] Mobile application
+If environment variables are required for local configuration, use the provided `.env.example` file as a reference.
 
-👨‍💻 Author
-Pruthvi Raj
-GitHub: https://github.com/Pruthvi654
+**Never commit real credentials, API keys, passwords, or other secrets to the repository.**
 
-📄 License
-This project is licensed under the MIT License.
-See LICENSE for details.
+## 🧪 Continuous Integration
+
+This repository includes a GitHub Actions workflow that performs basic project checks.
+
+The workflow:
+
+- 📦 Installs client dependencies
+- 🏗️ Builds the React client
+- 📦 Installs server dependencies
+- 🔍 Runs automatically for changes pushed to `main` and pull requests
+
+This helps catch basic build and dependency issues before changes are merged.
+
+## 🔮 Future Improvements
+
+The project can be expanded with:
+
+- [ ] Reconnect support
+- [ ] Persistent player profiles
+- [ ] Match history
+- [ ] Public matchmaking
+- [ ] Private invite links
+- [ ] Spectator mode
+- [ ] Production logging and monitoring
+- [ ] Expanded automated test coverage
+- [ ] Accessibility improvements
+- [ ] Mobile application
+- [ ] In-game chat
+- [ ] Player statistics and leaderboards
+
+## 👨‍💻 Author
+
+### Pruthvi Raj
+
+Software development enthusiast focused on building web applications, real-time systems, and interactive software projects.
+
+**GitHub:**  
+[github.com/Pruthvi654](https://github.com/Pruthvi654)
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the [LICENSE](LICENSE) file for more information.
