@@ -77,7 +77,7 @@ The server maintains the authoritative game state while connected clients receiv
 
 ## 📁 Project Structure
 
-```text
+```text```
 Uno-Multiplayer/
 ├── client/
 ├── server/
@@ -87,7 +87,7 @@ Uno-Multiplayer/
 ├── .gitignore
 ├── CONTRIBUTING.md
 ├── LICENSE
-└── README.md```
+└── README.md
 
 ## 🎯 Game Flow
 
