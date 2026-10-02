@@ -72,6 +72,8 @@ The server maintains the authoritative game state while connected clients receiv
 │  UNO / Draw Rules             │
 │  Authoritative Game State     │
 └──────────────────────────────┘
+```
+
 
 ## 📁 Project Structure
 
